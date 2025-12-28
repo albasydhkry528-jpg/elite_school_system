@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة النخبة الدولية | عالم الأنشطة الإبداعية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* إعادة التعيين والأنماط الأساسية */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #1565c0;
+            --secondary: #00838f;
+            --creative: #ff4081;
+            --science: #00bcd4;
+            --art: #ff9800;
+            --light: #f8f9fa;
+            --dark: #0a1931;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            color: #333;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* الشريط العلوي المبتكر */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, #0d47a1 100%);
+            padding: 1rem 3rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(21, 101, 192, 0.2);
+            backdrop-filter: blur(15px);
+            border-bottom: 3px solid var(--creative);
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--creative), var(--art));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-text h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #fff, var(--creative));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links a:hover {
+            background: var(--creative);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3);
+        }
+
+        .nav-links a.active {
+            background: var(--creative);
+            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.4);
+        }
+
+        /* قسم البطولة المبتكر */
+        .hero {
+            margin-top: 100px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(21, 101, 192, 0.85), rgba(0, 131, 143, 0.85)),
+                        url('https://images.pexels.com/photos/256468/pexels-photo-256468.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 64, 129, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 188, 212, 0.2) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem;
+            color: white;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--creative);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 10px 20px rgba(255, 64, 129, 0.3);
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-title span {
+            color: var(--creative);
+            display: block;
+            font-size: 3rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        /* قسم الأنشطة */
+        .activities-section {
+            padding: 100px 4rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .section-header h2 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 150px;
+            height: 5px;
+            background: linear-gradient(to right, var(--creative), var(--science));
+            border-radius: 3px;
+        }
+
+        .section-header p {
+            font-size: 1.3rem;
+            color: #666;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        /* شبكة الأنشطة المبتكرة */
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+            border-top: 5px solid var(--creative);
+        }
+
+        .activity-card:nth-child(2) {
+            border-top-color: var(--science);
+        }
+
+        .activity-card:nth-child(3) {
+            border-top-color: var(--art);
+        }
+
+        .activity-card:hover {
+            transform: translateY(-20px) rotate(1deg);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .activity-image {
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .activity-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .activity-card:hover .activity-image img {
+            transform: scale(1.1) rotate(-1deg);
+        }
+
+        .activity-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--creative);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        .activity-card:nth-child(2) .activity-badge {
+            background: var(--science);
+        }
+
+        .activity-card:nth-child(3) .activity-badge {
+            background: var(--art);
+        }
+
+        .activity-content {
+            padding: 30px;
+        }
+
+        .activity-title {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .activity-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .activity-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .feature-tag {
+            background: rgba(21, 101, 192, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            border: 1px solid rgba(21, 101, 192, 0.2);
+        }
+
+        .activity-card:nth-child(2) .feature-tag {
+            background: rgba(0, 188, 212, 0.1);
+            color: var(--science);
+            border-color: rgba(0, 188, 212, 0.2);
+        }
+
+        .activity-card:nth-child(3) .feature-tag {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--art);
+            border-color: rgba(255, 152, 0, 0.2);
+        }
+
+        /* قسم الإبداع */
+        .creativity-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 100px 4rem;
+            margin: 100px auto;
+            max-width: 1400px;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .creativity-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .creativity-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .creativity-content h2 {
+            font-size: 3.5rem;
+            margin-bottom: 40px;
+            color: var(--creative);
+        }
+
+        .creativity-content p {
+            font-size: 1.4rem;
+            line-height: 1.9;
+            max-width: 900px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        /* قسم توقيع الأنشطة */
+        .signature-section {
+            padding: 80px 4rem;
+            text-align: center;
+            background: white;
+            margin-top: 100px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .signature-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .signature-quote {
+            font-size: 1.5rem;
+            color: #666;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            border-right: 4px solid var(--creative);
+            padding-right: 20px;
+        }
+
+        /* التذييل المبسط */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 4rem;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .copyright {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* الرسوم المتحركة */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* التجاوب */
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3.2rem;
+            }
+           
+            .section-header h2 {
+                font-size: 3rem;
+            }
+           
+            .activity-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+           
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+           
+            .hero {
+                margin-top: 160px;
+                min-height: 70vh;
+            }
+           
+            .hero-content {
+                padding: 2rem;
+            }
+           
+            .hero-title {
+                font-size: 2.5rem;
+            }
+           
+            .hero-title span {
+                font-size: 2.2rem;
+            }
+           
+            .activities-section {
+                padding: 60px 2rem;
+            }
+           
+            .section-header h2 {
+                font-size: 2.5rem;
+            }
+           
+            .activities-grid {
+                grid-template-columns: 1fr;
+            }
+           
+            .creativity-section {
+                padding: 60px 2rem;
+                margin: 60px auto;
+            }
+           
+            .creativity-content h2 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+           
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+           
+            .activity-image {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>مدرسة النخبة الدولية</h1>
+                    <p>عالم الإبداع والابتكار</p>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="index.php" class="active">
+                    <i class="fas fa-home"></i>
+                    العودة للرئيسية
+                </a>
+                <a href="#activities">
+                    <i class="fas fa-paint-brush"></i>
+                    أنشطتنا
+                </a>
+                <a href="#creativity">
+                    <i class="fas fa-lightbulb"></i>
+                    إبداعنا
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- قسم البطولة -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-magic"></i> ورش إبداعية مستمرة
+            </div>
+            <h1 class="hero-title">
+                حيث تلتقي العقول المبدعة<br>
+                <span>ورش عمل تلهم المستقبل</span>
+            </h1>
+            <p class="hero-subtitle">
+                في مدرسة النخبة الدولية، نؤمن بأن التعليم الحقيقي يتجاوز جدران الفصول الدراسية. نقدم لطلابنا بيئة حاضنة للإبداع، حيث تتحول الأفكار إلى مشاريع، والمهارات إلى إنجازات، والمواهب إلى إبداعات تلمع في سماء التميز.
+            </p>
+        </div>
+    </section>
+
+    <!-- قسم الأنشطة -->
+    <section id="activities" class="activities-section">
+        <div class="section-header">
+            <h2>ورشنا الإبداعية</h2>
+            <p>مساحات لاكتشاف المواهب وصقل الإبداعات</p>
+        </div>
+
+        <!-- النشاط الأول: الرسم -->
+        <div class="activities-grid">
+            <div class="activity-card">
+                <div class="activity-image">
+                    <img src="images/qwe.jpg"
+                         alt="ورشة الرسم والفنون">
+                    <div class="activity-badge">
+                        <i class="fas fa-paint-brush"></i> فنون مرئية
+                    </div>
+                </div>
+                <div class="activity-content">
+                    <h2 class="activity-title">استوديو الفنون التشكيلية</h2>
+                    <div class="activity-description">
+                        <p>في استوديو الفنون التشكيلية، نمنح الطلاب مساحة حرة للتعبير عن أفكارهم ومشاعرهم عبر الألوان والخطوط. تحت إشراف فنانين محترفين، يتعلم الطلاب أساسيات الرسم بالألوان المائية، الأكريليك، الفحم، والرسم الرقمي.</p>
+                       
+                        <p>تتضمن الورشة دروساً في نظرية الألوان، التكوين الفني، وتقنيات الرسم المختلفة. كما ننظم معارض فنية فصلية لعرض إبداعات الطلاب، حيث يتم بيع الأعمال الفنية وتوجيه عائداتها لدعم الأنشطة الفنية بالمدرسة.</p>
+                       
+                        <p>يهدف البرنامج إلى تطوير الحس الجمالي، تحسين المهارات الحركية الدقيقة، وتعزيز الثقة بالنفس من خلال التعبير الفني الحر الذي يحترم رؤية كل طالب ويطورها.</p>
+                    </div>
+                   
+                    <div class="activity-features">
+                        <span class="feature-tag">ألوان مائية وأكريليك</span>
+                        <span class="feature-tag">رسم رقمي</span>
+                        <span class="feature-tag">معارض فنية فصلية</span>
+                        <span class="feature-tag">تدريب على يد فنانين محترفين</span>
+                    </div>
+                </div>
+            </div>
+
+       <!-- النشاط الثاني: المعمل -->
+            <div class="activity-card">
+                <div class="activity-image">
+                    <img src="images/chemistry-lab.jpg"
+                         alt="معمل الكيمياء">
+                    <div class="activity-badge">
+                        <i class="fas fa-flask"></i> علوم تجريبية
+                    </div>
+                </div>
+                <div class="activity-content">
+                    <h2 class="activity-title">مختبر العلوم الاستكشافي</h2>
+                    <div class="activity-description">
+                        <p>في مختبر العلوم المتطور، نحول النظريات العلمية إلى تجارب مثيرة تثير فضول الطلاب وتحفز شغفهم بالعلوم. المختبر مجهز بأحدث الأجهزة العلمية والمعامل الافتراضية التي تتيح للطلاب إجراء تجارب آمنة ومبتكرة.</p>
+                       
+                        <p>ينقسم البرنامج إلى وحدات متخصصة تشمل الكيمياء التحليلية، الفيزياء التطبيقية، والأحياء الجزيئية. يتعلم الطلاب من خلال مشاريع عملية مثل استخلاص الحمض النووي، صناعة البوليمرات، وتحليل عينات المياه والتربة.</p>
+                       
+                        <p>نركز على تطوير مهارات البحث العلمي، التحليل المنطقي، والتفكير النقدي. كما نشارك في المسابقات العلمية الدولية وننظم زيارات ميدانية لمراكز الأبحاث والجامعات المتخصصة.</p>
+                    </div>
+                   
+                    <div class="activity-features">
+                        <span class="feature-tag">كيمياء تحليلية</span>
+                        <span class="feature-tag">فيزياء تطبيقية</span>
+                        <span class="feature-tag">أحياء جزيئية</span>
+                        <span class="feature-tag">مشاريع بحثية</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- النشاط الثالث: المجسمات -->
+            <div class="activity-card">
+                <div class="activity-image">
+                    <img src="images/asd.jpg"
+                         altورشة المجسمات والتصميم"">
+                    <div class="activity-badge">
+                        <i class="fas fa-cube"></i> تصميم ثلاثي الأبعاد
+                    </div>
+                </div>
+                <div class="activity-content">
+                    <h2 class="activity-title">ورشة التصميم والمجسمات</h2>
+                    <div class="activity-description">
+                        <p>في ورشة التصميم والمجسمات، نعلم الطلاب تحويل الأفكار المجردة إلى نماذج ملموسة باستخدام تقنيات متعددة. يتعلم الطلاب أساسيات التصميم ثلاثي الأبعاد، النمذجة، والطباعة ثلاثية الأبعاد باستخدام أحدث الطابعات المتطورة.</p>
+                       
+                        <p>تشمل الورشة مشاريع عملية مثل تصميم المدن الذكية، بناء مجسمات للمركبات الفضائية، وتصميم منتجات مبتكرة. يتعاون الطلاب في فرق لتنفيذ مشاريع جماعية تعزز مهارات العمل الجماعي والتواصل الفعال.</p>
+                       
+                        <p>نركز على تطوير مهارات حل المشكلات، التفكير التصميمي، والإبداع التقني. كما نربط المشاريع بالتحديات العالمية الحقيقية مثل الاستدامة البيئية والابتكار في مجال الطاقة المتجددة.</p>
+                    </div>
+                   
+                    <div class="activity-features">
+                        <span class="feature-tag">تصميم ثلاثي الأبعاد</span>
+                        <span class="feature-tag">طباعة ثلاثية الأبعاد</span>
+                        <span class="feature-tag">نمذجة ومجسمات</span>
+                        <span class="feature-tag">مشاريع تطبيقية</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الإبداع -->
+    <section id="creativity" class="creativity-section">
+        <div class="creativity-content">
+            <h2>الإبداع.. لغتنا المشتركة</h2>
+            <p>
+                في مدرسة النخبة الدولية، لا نكتفي بتعليم المنهج الدراسي، بل نصنع بيئة تحفز الإبداع في كل زاوية. نؤمن بأن كل طالب يحمل بذرة إبداعية فريدة، ودورنا هو توفير التربة الخصبة والمناخ المناسب لهذه البذور لتنمو وتزهر. من خلال برامجنا المتنوعة، نهدف إلى تنمية المهارات الإبداعية، التفكير النقدي، والقدرة على الابتكار التي تعد أدوات أساسية لنجاح الطلاب في القرن الحادي والعشرين.
+            </p>
+        </div>
+    </section>
+
+    <!-- قسم توقيع الأنشطة -->
+    <section class="signature-section">
+        <h2 class="signature-title">كلمة الفريق الإبداعي</h2>
+        <p class="signature-quote">
+            "نحن لا نعلم الطلاب الرسم أو العلوم أو التصميم فقط، بل نعلمهم كيف يروا العالم بعيون مختلفة، كيف يحولوا الخيال إلى واقع، وكيف يصنعوا التغيير بأيديهم. الإبداع ليس موهبة فطرية فقط، بل مهارة يمكن تعلمها وتطويرها، وهذا بالضبط ما نفعله هنا."
+        </p>
+    </section>
+
+    <!-- التذييل المبسط -->
+    <footer class="footer">
+        <div class="copyright">
+            <p>جميع الحقوق محفوظة &copy; 2025 مدرسة النخبة الدولية | مركز الأنشطة الإبداعية</p>
+        </div>
+    </footer>
+
+    <script>
+        // تنشيط الرسوم المتحركة عند التمرير
+        document.addEventListener('DOMContentLoaded', function() {
+            const activityCards = document.querySelectorAll('.activity-card');
+           
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                    }
+                });
+            }, {
+                threshold: 0.2,
+                rootMargin: '0px 0px -100px 0px'
+            });
+           
+            activityCards.forEach(card => {
+                card.style.opacity = '0';
+                observer.observe(card);
+            });
+           
+            // تأثير التمرير السلس للروابط
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                   
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

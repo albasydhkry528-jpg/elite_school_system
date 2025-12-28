@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة النخبة الدولية | تواصل معنا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* إعادة التعيين والأنماط الأساسية */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #0066cc;
+            --secondary: #0099cc;
+            --accent: #00cc99;
+            --light: #f0f8ff;
+            --dark: #003366;
+            --success: #2e7d32;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e6f2ff 0%, #ccf2ff 100%);
+            color: #333;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* الشريط العلوي */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, #0052a3 100%);
+            padding: 1rem 3rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(0, 102, 204, 0.2);
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 8px 20px rgba(0, 204, 153, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-text h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 204, 153, 0.3);
+        }
+
+        .nav-links a.active {
+            background: var(--accent);
+            box-shadow: 0 10px 20px rgba(0, 204, 153, 0.4);
+        }
+
+        /* قسم البطولة العلوي */
+        .top-hero {
+            margin-top: 100px;
+            padding: 4rem 4rem 2rem 4rem;
+            background: linear-gradient(rgba(0, 102, 204, 0.9), rgba(0, 153, 204, 0.8)),
+                        url('https://images.pexels.com/photos/3823490/pexels-photo-3823490.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .top-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 50%, rgba(0, 204, 153, 0.2) 0%, transparent 70%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 10px 20px rgba(0, 204, 153, 0.3);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-title span {
+            color: var(--accent);
+            display: block;
+            font-size: 2.5rem;
+            margin-top: 10px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        /* أرقام الاتصال - تحت بعض */
+        .contact-numbers-container {
+            padding: 2rem 4rem;
+            background: white;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 100px;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent), var(--secondary));
+            border-radius: 3px;
+        }
+
+        /* تصميم الأرقام تحت بعض */
+        .numbers-horizontal {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.number-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.number-card {
+    background: linear-gradient(135deg, white, var(--light));
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 30px rgba(0, 102, 204, 0.1);
+    transition: var(--transition);
+    border-top: 5px solid var(--accent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+.number-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 40px rgba(0, 102, 204, 0.2);
+}
+
+.number-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--accent), var(--secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.8rem;
+    box-shadow: 0 10px 20px rgba(0, 204, 153, 0.3);
+}
+
+.number-content {
+    flex: 1;
+}
+
+.number-title {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.number-description {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+.number-display {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--dark);
+    direction: ltr;
+    background: rgba(0, 102, 204, 0.05);
+    padding: 15px 25px;
+    border-radius: 15px;
+    border: 2px dashed var(--secondary);
+    width: 100%;
+}
+
+.number-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: var(--transition);
+    box-shadow: 0 8px 20px rgba(0, 204, 153, 0.3);
+    white-space: nowrap;
+}
+
+.number-call:hover {
+    background: var(--primary);
+    transform: scale(1.05);
+    box-shadow: 0 15px 25px rgba(0, 102, 204, 0.4);
+}
+
+/* التجاوب للأجهزة الصغيرة */
+@media (max-width: 1200px) {
+    .number-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .number-row {
+        grid-template-columns: 1fr;
+    }
+   
+    .number-card {
+        padding: 20px;
+    }
+   
+    .number-display {
+        font-size: 1.5rem;
+    }
+}
+
+        /* ساعات العمل */
+        .working-hours {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 60px 4rem;
+            margin-top: 80px;
+            border-radius: 30px;
+            text-align: center;
+        }
+
+        .hours-title {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--accent);
+        }
+
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hour-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hour-item .day {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .hour-item .time {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* التذييل */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 4rem;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .copyright {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* الرسوم المتحركة */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* التجاوب */
+        @media (max-width: 1200px) {
+            .contact-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+           
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+           
+            .top-hero, .contact-numbers-container, .contact-section {
+                padding: 2rem;
+            }
+           
+            .hero-title {
+                font-size: 2.5rem;
+            }
+           
+            .number-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 15px;
+            }
+           
+            .number-display {
+                min-width: auto;
+                text-align: center;
+            }
+           
+            .working-hours {
+                padding: 40px 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+           
+            .section-title h2 {
+                font-size: 2rem;
+            }
+           
+            .contact-form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>مدرسة النخبة الدولية</h1>
+                    <p>نحن هنا لخدمتكم</p>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="index.php" class="active">
+                    <i class="fas fa-home"></i>
+                    العودة للرئيسية
+                </a>
+                <a href="#numbers">
+                    <i class="fas fa-mobile-alt"></i>
+                    أرقام الاتصال
+                
+                </a>
+                <a href="#hours">
+                    <i class="fas fa-clock"></i>
+                    أوقات العمل
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- قسم البطولة العلوي -->
+    <section class="top-hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-headset"></i> نحن نستمع إليك
+            </div>
+            <h1 class="hero-title">
+                تواصل معنا مباشرة<br>
+                <span>فريقنا متواجد لخدمتكم</span>
+            </h1>
+            <p class="hero-subtitle">
+                في مدرسة النخبة الدولية، نعتبر التواصل مع أولياء الأمور والطلاب أولوية قصوى. نوفر لكم قنوات اتصال متعددة ومباشرة مع إدارة المدرسة، المعلمين، والأقسام المختلفة. فريقنا متواجد دائماً للإجابة على استفساراتكم وتقديم الدعم اللازم.
+            </p>
+        </div>
+    </section>
+
+       <!-- أرقام الاتصال - تحت بعض -->
+    <section id="numbers" class="contact-numbers-container">
+    <div class="section-title">
+        <h2>أرقام الاتصال المباشرة</h2>
+        <p>اتصل بنا على أي من هذه الأرقام مباشرة</p>
+    </div>
+   
+    <div class="numbers-horizontal">
+        <div class="number-row">
+            <div class="number-card">
+                <div class="number-icon">
+                    <i class="fas fa-phone-volume"></i>
+                </div>
+                <div class="number-content">
+                    <div class="number-title">الاتصال المباشر</div>
+                    <div class="number-description">رقم هاتف رئيسي - مفتوح 24/7</div>
+                </div>
+                <div class="number-display">+967 774569033</div>
+                <a href="tel:+967123456789" class="number-call">
+                    <i class="fas fa-phone"></i> اتصل الآن
+                </a>
+            </div>
+
+            <div class="number-card">
+                <div class="number-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="number-content">
+                    <div class="number-title">مدير المدرسة</div>
+                    <div class="number-description">للاستفسارات الخاصة والإدارية</div>
+                </div>
+                <div class="number-display">+967 785430277</div>
+                <a href="tel:+967123456788" class="number-call">
+                    <i class="fas fa-phone"></i> اتصل الآن
+                </a>
+            </div>
+
+            <div class="number-card">
+                <div class="number-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="number-content">
+                    <div class="number-title">شؤون الطلاب</div>
+                    <div class="number-description">متابعة الطلاب والإشراف التربوي</div>
+                </div>
+                <div class="number-display">+967 734698456</div>
+                <a href="tel:+967123456787" class="number-call">
+                    <i class="fas fa-phone"></i> اتصل الآن
+                </a>
+            </div>
+        </div>
+
+        <div class="number-row">
+            <div class="number-card">
+                <div class="number-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="number-content">
+                    <div class="number-title">القسم المالي</div>
+                    <div class="number-description">الرسوم الدراسية والمدفوعات</div>
+                </div>
+                <div class="number-display">+967 776543255</div>
+                <a href="tel:+967123456786" class="number-call">
+                    <i class="fas fa-phone"></i> اتصل الآن
+                </a>
+            </div>
+
+            <div class="number-card">
+                <div class="number-icon">
+                    <i class="fas fa-bus"></i>
+                </div>
+                <div class="number-content">
+                    <div class="number-title">خدمة النقل</div>
+                    <div class="number-description">لشؤون الباصات والمواصلات</div>
+                </div>
+                <div class="number-display">+967 778965433</div>
+                <a href="tel:+967123456785" class="number-call">
+                    <i class="fas fa-phone"></i> اتصل الآن
+                </a>
+            </div>
+
+            <div class="number-card">
+                <div class="number-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="number-content">
+                    <div class="number-title">التسجيل والقبول</div>
+                    <div class="number-description">الالتحاق بالمدرسة والاستفسارات</div>
+                </div>
+                <div class="number-display">+967 785448954</div>
+                <a href="tel:+967123456784" class="number-call">
+                    <i class="fas fa-phone"></i> اتصل الآن
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+    
+    <!-- ساعات العمل -->
+    <section id="hours" class="working-hours">
+        <h2 class="hours-title">ساعات العمل الرسمية</h2>
+        <div class="hours-grid">
+            <div class="hour-item">
+                <div class="day">الأحد - الأربعاء</div>
+                <div class="time">7:30 صباحاً - 3:00 مساءً</div>
+            </div>
+            <div class="hour-item">
+                <div class="day">الخميس</div>
+                <div class="time">7:30 صباحاً - 1:00 ظهراً</div>
+            </div>
+            <div class="hour-item">
+                <div class="day">السبت</div>
+                <div class="time">9:00 صباحاً - 12:00 ظهراً</div>
+            </div>
+            <div class="hour-item">
+                <div class="day">الدعم الطارئ</div>
+                <div class="time">على مدار 24 ساعة</div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

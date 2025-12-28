@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>الملف الشخصي | مدير النظام</title>
+
+<style>
+body{
+    font-family: Tahoma, Arial;
+    background:#f2f4f7;
+    margin:0;
+    padding:0;
+}
+.container{
+    width:100%;
+    min-height:100vh;
+    margin:0;
+    padding:30px;
+    box-sizing:border-box;
+}
+.header{
+    background:#2c3e50;
+    color:#fff;
+    padding:30px;
+    text-align:center;
+    border-radius:10px;
+}
+.header h1{
+    margin:0;
+    font-size:28px;
+}
+.header p{
+    margin:5px 0;
+    opacity:0.9;
+}
+.status{
+    display:inline-block;
+    margin-top:10px;
+    padding:6px 18px;
+    background:#27ae60;
+    border-radius:20px;
+    font-size:14px;
+}
+
+.card{
+    background:#fff;
+    margin-top:20px;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.card h2{
+    margin-bottom:15px;
+    color:#2c3e50;
+    border-bottom:2px solid #eee;
+    padding-bottom:8px;
+}
+.card ul{
+    list-style:none;
+    padding:0;
+}
+.card ul li{
+    padding:8px 0;
+    border-bottom:1px solid #eee;
+}
+
+.permissions li{
+    font-weight:bold;
+    color:#34495e;
+}
+
+.footer{
+    text-align:center;
+    margin:30px 0;
+    color:#888;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>أحمد محمد علي</h1>
+        <p>مدير النظام (Admin)</p>
+        <span class="status">نشط</span>
+    </div>
+
+    <!-- Basic Info -->
+    <div class="card">
+        <h2>المعلومات الأساسية</h2>
+        <ul>
+            <li><strong>اسم المستخدم:</strong> admin</li>
+            <li><strong>البريد الإلكتروني:</strong> admin@elite-school.edu</li>
+            <li><strong>رقم الهاتف:</strong> +967 711 222 333</li>
+            <li><strong>العنوان:</strong> صنعاء - شارع الزبيري</li>
+            <li><strong>نوع المستخدم:</strong> مدير النظام</li>
+        </ul>
+    </div>
+
+    <!-- System Info -->
+    <div class="card">
+        <h2>معلومات النظام</h2>
+        <ul>
+            <li><strong>تاريخ إنشاء الحساب:</strong> 2025-12-17 04:19:32</li>
+            <li><strong>آخر تسجيل دخول:</strong> 2025-12-18 18:36:51</li>
+        </ul>
+    </div>
+
+    <!-- Permissions -->
+    <div class="card">
+        <h2>صلاحيات المدير</h2>
+        <ul class="permissions">
+            <li>✔ إدارة المستخدمين</li>
+            <li>✔ التقارير التحصيلية</li>
+            <li>✔ الإشراف الكامل على النظام</li>
+            <li>✔ تعديل الإعدادات العامة</li>
+        </ul>
+    </div>
+
+    <!-- Activities -->
+    <div class="card">
+        <h2>آخر النشاطات</h2>
+        <ul>
+            <li>🔧 تحديث إعدادات النظام</li>
+            <li>📊 عرض التقارير التحصيلية</li>
+            <li>👥 إدارة المستخدمين</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        نظام إدارة المدرسة © 2025
+    </div>
+
+</div>
+
+</body>
+</html>

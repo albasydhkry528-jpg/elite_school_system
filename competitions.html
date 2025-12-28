@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة النخبة الدولية | إنجازات وبطولات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* إعادة التعيين والأنماط الأساسية */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #1a237e;
+            --secondary: #0d47a1;
+            --accent: #ffd700;
+            --gold: #ffc107;
+            --light: #f8f9fa;
+            --dark: #0a1931;
+            --success: #2e7d32;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%);
+            color: #333;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* الشريط العلوي الفخم */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, #0d193b 100%);
+            padding: 1rem 3rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 28px;
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .logo-text h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links a.active {
+            background: var(--accent);
+            color: var(--primary);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* قسم البطولة */
+        .hero {
+            margin-top: 100px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(26, 35, 126, 0.9), rgba(13, 71, 161, 0.8)),
+                        url('https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover fixed;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 50%, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem;
+            color: white;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--primary);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-title span {
+            color: var(--accent);
+            display: block;
+            font-size: 3.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            max-width: 900px;
+            margin: 0 auto 40px;
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        /* قسم الإنجازات */
+        .achievements-section {
+            padding: 100px 4rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .section-header h2 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 150px;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent), var(--gold));
+            border-radius: 3px;
+        }
+
+        .section-header p {
+            font-size: 1.3rem;
+            color: #666;
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        /* بطاقات الإنجازات - تحسين التنسيق */
+        .achievement-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 100px;
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: var(--transition);
+            position: relative;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            min-height: 500px;
+        }
+
+        .achievement-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            bottom: -2px;
+            left: -2px;
+            background: linear-gradient(45deg, var(--accent), var(--primary), var(--accent));
+            border-radius: 27px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .achievement-card:hover::before {
+            opacity: 0.5;
+        }
+
+        .achievement-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .achievement-card:nth-child(even) .achievement-image {
+            order: 2;
+        }
+
+        .achievement-card:nth-child(even) .achievement-content {
+            order: 1;
+            padding-right: 40px;
+            padding-left: 0;
+        }
+
+        .achievement-image {
+            height: 100%;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .achievement-card:hover .achievement-image img {
+            transform: scale(1.05);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+        }
+
+        .image-overlay h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .achievement-content {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .achievement-trophy {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            color: var(--primary);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(255, 215, 0, 0.2);
+            align-self: flex-start;
+        }
+
+        .achievement-title {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .achievement-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 30px;
+            flex-grow: 1;
+            text-align: justify;
+        }
+
+        .achievement-details {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(26, 35, 126, 0.05) 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border-right: 4px solid var(--accent);
+            margin-bottom: 25px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item i {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-top: 3px;
+            min-width: 25px;
+        }
+
+        .detail-item strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .detail-item p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .achievement-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+            border-top: 4px solid var(--accent);
+        }
+
+        .stat-item .number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-item .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* قسم المجد */
+        .glory-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #0d193b 100%);
+            color: white;
+            padding: 80px 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glory-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffd700' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .glory-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .glory-content h2 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: var(--accent);
+        }
+
+        .glory-content p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        /* التذييل المبسط */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 4rem;
+            text-align: center;
+        }
+
+        .copyright {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* الرسوم المتحركة */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* التجاوب */
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3.2rem;
+            }
+           
+            .achievement-card {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+           
+            .achievement-card:nth-child(even) .achievement-image {
+                order: 1;
+            }
+           
+            .achievement-card:nth-child(even) .achievement-content {
+                order: 2;
+                padding: 40px;
+            }
+           
+            .achievement-image {
+                height: 400px;
+                min-height: auto;
+            }
+           
+            .achievement-content {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+           
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+           
+            .hero {
+                margin-top: 160px;
+                min-height: 70vh;
+            }
+           
+            .hero-content {
+                padding: 2rem;
+            }
+           
+            .hero-title {
+                font-size: 2.5rem;
+            }
+           
+            .hero-title span {
+                font-size: 2.2rem;
+            }
+           
+            .achievements-section {
+                padding: 60px 2rem;
+            }
+           
+            .section-header h2 {
+                font-size: 2.5rem;
+            }
+           
+            .achievement-title {
+                font-size: 1.8rem;
+            }
+           
+            .achievement-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+           
+            .glory-section {
+                padding: 60px 2rem;
+            }
+           
+            .glory-content h2 {
+                font-size: 2.2rem;
+            }
+           
+            .glory-content p {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+           
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+           
+            .achievement-image {
+                height: 300px;
+            }
+           
+            .achievement-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>مدرسة النخبة الدولية</h1>
+                    <p>قادة التميز والبطولات</p>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="index.php" class="active">
+                    <i class="fas fa-home"></i>
+                    العودة للرئيسية
+                </a>
+                <a href="#achievements">
+                    <i class="fas fa-trophy"></i>
+                    إنجازاتنا
+                </a>
+                <a href="#glory">
+                    <i class="fas fa-crown"></i>
+                    مجد البطولات
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- قسم البطولة -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-award"></i> قمة التميز في المسابقات المحلية والدولية
+            </div>
+            <h1 class="hero-title">
+                صرح البطولات<br>
+                <span>حيث تتحول التحديات إلى إنجازات</span>
+            </h1>
+            <p class="hero-subtitle">
+                على مدى عقدين من الزمن، استطاعت مدرسة النخبة الدولية أن تثبت تفوقها المطلق في مختلف المسابقات الأكاديمية والرياضية والدينية، محققة مراكز متقدمة ورفع اسم المدرسة في المحافل المحلية والإقليمية والدولية.
+            </p>
+        </div>
+    </section>
+
+    <!-- قسم الإنجازات -->
+    <section id="achievements" class="achievements-section">
+        <div class="section-header">
+            <h2>إنجازاتنا البطولية</h2>
+            <p>قصص نجاح ترويها الكؤوس والميداليات</p>
+        </div>
+
+           <!-- الإنجاز الأول: مسابقة الذكاء -->
+        <div class="achievement-card">
+            <div class="achievement-image">
+                <img src="images/fgh.png"
+                     alt="مسابقة الذكاء بين المدارس">
+                <div class="image-overlay">
+                    <h4>البطولة الوطنية للذكاء الاصطناعي</h4>
+                    <p>المركز الأول على مستوى الوطن العربي</p>
+                </div>
+            </div>
+            <div class="achievement-content">
+                <div class="achievement-trophy">
+                    <i class="fas fa-brain"></i> بطولة الذكاء والابتكار
+                </div>
+                <h2 class="achievement-title">تتويج العقول المبدعة<br>ببطولة الذكاء الوطني</h2>
+                <div class="achievement-description">
+                    <p>في إنجاز تاريخي يعكس عمق التميز الأكاديمي، توجت مدرسة النخبة الدولية بطلةً للذكاء والابتكار في المسابقة الوطنية للذكاء الاصطناعي والتفكير النقدي التي أقيمت تحت رعاية وزارة التعليم العالي.</p>
+                   
+                    <p>تنافس في هذه المسابقة أكثر من 200 مدرسة من مختلف أنحاء الوطن العربي، حيث تفوق طلابنا على جميع المنافسين بفارق كبير.</p>
+                </div>
+               
+                <div class="achievement-details">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <strong>تاريخ البطولة:</strong>
+                            <p>15 - 17 مارس 2024</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <strong>عدد المشاركين:</strong>
+                            <p>200 مدرسة عربية، 1500 طالب وطالبة</p>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="achievement-stats">
+                    <div class="stat-item">
+                        <div class="number">94.5%</div>
+                        <div class="label">نسبة التفوق</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="number">15</div>
+                        <div class="label">ميدالية ذهبية</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الإنجاز الثاني: كرة القدم -->
+        <div class="achievement-card">
+            <div class="achievement-image">
+                <img src="images/vbn.jpg"
+                     alt="بطولة كرة القدم المدرسية">
+                <div class="image-overlay">
+                    <h4>الدوري المدرسي الممتاز لكرة القدم</h4>
+                    <p>المركز الأول للعام الثالث على التوالي</p>
+                </div>
+            </div>
+            <div class="achievement-content">
+                <div class="achievement-trophy">
+                    <i class="fas fa-futbol"></i> بطولة الأبطال الرياضية
+                </div>
+                <h2 class="achievement-title">سيطرة مطلقة على الملاعب<br>بطل الدوري المدرسي 3 سنوات متتالية</h2>
+                <div class="achievement-description">
+                    <p>استطاع فريق كرة القدم بمدرسة النخبة الدولية أن يكتب اسمه بحروف من ذهب في سجلات الرياضة المدرسية، بتتويجه بطلاً للدوري المدرسي الممتاز للمرة الثالثة على التوالي.</p>
+                   
+                    <p>شهد الموسم الرياضي 2024 تنافساً شرساً بين 48 فريقاً مدرسياً من مختلف المحافظات، حيث تمكن فريق النخبة من تجاوز جميع المراحل بسهولة تامة، مسجلاً 38 هدفاً في الشباك وملقياً 4 أهداف فقط.</p>
+                </div>
+               
+                <div class="achievement-details">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <strong>موسم البطولة:</strong>
+                            <p>سبتمبر 2023 - مايو 2024</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <strong>الفرق المشاركة:</strong>
+                            <p>48 فريقاً مدرسياً من 12 محافظة</p>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="achievement-stats">
+                    <div class="stat-item">
+                        <div class="number">38-4</div>
+                        <div class="label">الأهداف</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="number">3</div>
+                        <div class="label">سنوات بطولة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الإنجاز الثالث: حفظ القرآن الكريم -->
+        <div class="achievement-card">
+            <div class="achievement-image">
+                <img src="images//zxc.jpg"
+                     alt="مسابقة حفظ القرآن الكريم">
+                <div class="image-overlay">
+                    <h4>المسابقة الدولية لحفظ القرآن الكريم</h4>
+                    <p>المركز الأول في جميع فروع المسابقة</p>
+                </div>
+            </div>
+            <div class="achievement-content">
+                <div class="achievement-trophy">
+                    <i class="fas fa-quran"></i> بطولة الإيمان والتلاوة
+                </div>
+                <h2 class="achievement-title">تاج التلاوة والتجويد<br>صدارة المسابقة القرآنية الدولية</h2>
+                <div class="achievement-description">
+                    <p>في إنجاز يعكس التميز الروحي والأخلاقي، حققت مدرسة النخبة الدولية المركز الأول في المسابقة الدولية السنوية لحفظ وتجويد القرآن الكريم، والتي تنظمها رابطة العالم الإسلامي.</p>
+                   
+                    <p>شارك في المسابقة 25 طالباً وطالبة من المدرسة في مختلف الفروع (حفظ كامل، نصف القرآن، ربع القرآن، والتجويد)، حيث حصلوا جميعاً على مراكز متقدمة.</p>
+                </div>
+               
+                <div class="achievement-details">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <strong>تاريخ المسابقة:</strong>
+                            <p>رمضان 1445هـ - أبريل 2024</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <strong>المشاركون:</strong>
+                            <p>5000 متسابق من 45 دولة</p>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="achievement-stats">
+                    <div class="stat-item">
+                        <div class="number">100%</div>
+                        <div class="label">نسبة الحفظ المتقن</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="number">25</div>
+                        <div class="label">طالباً في المراكز الأولى</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم المجد -->
+    <section id="glory" class="glory-section">
+        <div class="glory-content">
+            <h2>مجد مستمر... وتميز لا يتوقف</h2>
+            <p>
+                هذه الإنجازات ليست مجرد أرقام أو كؤوس، بل هي ثمرة رؤية استراتيجية ورعاية متكاملة، حيث تدمج مدرسة النخبة الدولية بين التميز الأكاديمي، البراعة الرياضية، والتربية الروحية، لتصنع جيلاً متكاملاً قادراً على حمل راية التميز في جميع المجالات. نحن لا نبحث عن الفوز، بل نصنع التميز.
+            </p>
+        </div>
+    </section>
+
+    <!-- التذييل المبسط -->
+    <footer class="footer">
+        <div class="copyright">
+            <p>جميع الحقوق محفوظة &copy; 2025 مدرسة النخبة الدولية | إنجازات وبطولات</p>
+        </div>
+    </footer>
+
+    <script>
+        // تنشيط الرسوم المتحركة عند التمرير
+        document.addEventListener('DOMContentLoaded', function() {
+            const achievementCards = document.querySelectorAll('.achievement-card');
+           
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.2,
+                rootMargin: '0px 0px -100px 0px'
+            });
+           
+            achievementCards.forEach(card => {
+                observer.observe(card);
+            });
+           
+            // تأثير التمرير السلس للروابط
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                   
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

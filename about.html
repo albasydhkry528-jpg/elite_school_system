@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة النخبة الدولية | رحلة التميز التعليمي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* إعادة التعيين والأنماط الأساسية */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+        }
+
+        :root {
+            --primary: #0a1931;
+            --secondary: #1a365d;
+            --accent: #ffd700;
+            --gold: #ffc107;
+            --light: #f8f9fa;
+            --dark-blue: #0d193b;
+            --transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+            color: #333;
+            line-height: 1.8;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* الشريط العلوي الفخم */
+        .navbar {
+            background: linear-gradient(135deg, rgba(10, 25, 49, 0.95) 0%, rgba(26, 54, 93, 0.95) 100%);
+            padding: 1.2rem 4rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10000;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            border-bottom: 4px solid var(--accent);
+        }
+
+        .nav-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 32px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .logo-text h1 {
+            color: white;
+            font-size: 2.3rem;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 12px 28px;
+            border-radius: 15px;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links a.active {
+            background: var(--accent);
+            color: var(--primary);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* قسم البطولة */
+        .hero {
+            margin-top: 120px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                linear-gradient(rgba(10, 25, 49, 0.9), rgba(26, 54, 93, 0.8)),
+                url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem;
+            color: white;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--primary);
+            padding: 15px 40px;
+            border-radius: 60px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            font-size: 1.3rem;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            line-height: 1.2;
+            margin-bottom: 40px;
+            text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-title span {
+            color: var(--accent);
+            display: block;
+            font-size: 3.8rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.6rem;
+            max-width: 1000px;
+            margin: 60px auto;
+            opacity: 0.95;
+            line-height: 2;
+            font-weight: 300;
+        }
+
+        /* قسم الإنجازات - تصميم جديد */
+        .achievements-section {
+            padding: 120px 4rem;
+            max-width: 2000px;
+            margin: 0 auto;
+            position: relative;
+            background: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 100px;
+            position: relative;
+        }
+
+        .section-header h2 {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 180px;
+            height: 6px;
+            background: linear-gradient(to right, var(--accent), var(--gold));
+            border-radius: 3px;
+        }
+
+        .section-header p {
+            font-size: 1.5rem;
+            color: #666;
+            max-width: 900px;
+            margin: 40px auto;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* تصميم جديد للبطاقات - عرض أفقي كامل */
+        .story-section {
+            margin-bottom: 150px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 25px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            background: white;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .story-section.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .full-width-image {
+            width: 100%;
+            height: 1100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .full-width-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.2s ease;
+        }
+
+        .story-section:hover .full-width-image img {
+            transform: scale(1.05);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 50px;
+            color: white;
+        }
+
+        .image-overlay h3 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .image-overlay p {
+            font-size: 1.4rem;
+            max-width: 800px;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        .story-content {
+            padding: 60px;
+            background: white;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .content-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 32px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .content-title {
+            font-size: 2.8rem;
+            color: var(--primary);
+            line-height: 1.3;
+        }
+
+        .content-description {
+            font-size: 1.3rem;
+            line-height: 1.9;
+            color: #555;
+            margin-bottom: 40px;
+            text-align: justify;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(10, 25, 49, 0.05) 100%);
+            padding: 30px;
+            border-radius: 20px;
+            border-right: 4px solid var(--accent);
+        }
+
+        .feature-item h4 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-item h4 i {
+            color: var(--accent);
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 60px;
+            background: linear-gradient(135deg, rgba(10, 25, 49, 0.03) 0%, rgba(255, 215, 0, 0.03) 100%);
+            padding: 40px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* قسم المجد */
+        .philosophy-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #0d193b 100%);
+            color: white;
+            padding: 120px 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .philosophy-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .philosophy-content h2 {
+            font-size: 4rem;
+            margin-bottom: 50px;
+            color: var(--accent);
+        }
+
+        .philosophy-content p {
+            font-size: 1.6rem;
+            line-height: 2;
+            max-width: 1000px;
+            margin: 0 auto;
+            opacity: 0.9;
+            font-weight: 300;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* التذييل المبسط */
+        .footer {
+            background: var(--dark-blue);
+            color: white;
+            padding: 40px 4rem;
+            text-align: center;
+        }
+
+        .copyright {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* التجاوب */
+        @media (max-width: 1600px) {
+            .hero-title {
+                font-size: 3.8rem;
+            }
+           
+            .hero-title span {
+                font-size: 3.2rem;
+            }
+           
+            .full-width-image {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3.2rem;
+            }
+           
+            .hero-title span {
+                font-size: 2.8rem;
+            }
+           
+            .content-title {
+                font-size: 2.4rem;
+            }
+           
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+           
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+           
+            .image-overlay h3 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .navbar {
+                padding: 1rem 2rem;
+            }
+           
+            .nav-container {
+                flex-direction: column;
+                gap: 25px;
+            }
+           
+            .hero {
+                margin-top: 180px;
+                min-height: 70vh;
+            }
+           
+            .hero-content {
+                padding: 4rem 2rem;
+            }
+           
+            .hero-title {
+                font-size: 2.8rem;
+            }
+           
+            .hero-title span {
+                font-size: 2.4rem;
+            }
+           
+            .hero-subtitle {
+                font-size: 1.3rem;
+                margin: 40px auto;
+            }
+           
+            .achievements-section {
+                padding: 80px 2rem;
+            }
+           
+            .section-header h2 {
+                font-size: 3rem;
+            }
+           
+            .section-header p {
+                font-size: 1.3rem;
+            }
+           
+            .full-width-image {
+                height: 400px;
+            }
+           
+            .story-content {
+                padding: 40px;
+            }
+           
+            .content-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+           
+            .content-title {
+                font-size: 2rem;
+            }
+           
+            .content-description {
+                font-size: 1.2rem;
+            }
+           
+            .philosophy-section {
+                padding: 80px 2rem;
+            }
+           
+            .philosophy-content h2 {
+                font-size: 3rem;
+            }
+           
+            .philosophy-content p {
+                font-size: 1.3rem;
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.4rem;
+            }
+           
+            .hero-title span {
+                font-size: 2rem;
+            }
+           
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+           
+            .full-width-image {
+                height: 350px;
+            }
+           
+            .image-overlay {
+                padding: 30px;
+            }
+           
+            .image-overlay h3 {
+                font-size: 2.2rem;
+            }
+           
+            .image-overlay p {
+                font-size: 1.2rem;
+            }
+           
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+           
+            .stat-number {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+           
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+           
+            .hero-badge {
+                font-size: 1.1rem;
+                padding: 12px 30px;
+            }
+           
+            .full-width-image {
+                height: 300px;
+            }
+           
+            .image-overlay h3 {
+                font-size: 1.8rem;
+            }
+           
+            .content-title {
+                font-size: 1.8rem;
+            }
+           
+            .philosophy-content h2 {
+                font-size: 2.2rem;
+            }
+           
+            .philosophy-content p {
+                font-size: 1.1rem;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>مدرسة النخبة الدولية</h1>
+                    <p>رحلة التميز التعليمي</p>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="index.php" class="active">
+                    <i class="fas fa-home"></i>
+                    الرئيسية
+                </a>
+                <a href="#stories">
+                    <i class="fas fa-star"></i>
+                    رحلتنا التعليمية
+                </a>
+                <a href="#philosophy">
+                    <i class="fas fa-crown"></i>
+                    فلسفتنا
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- قسم البطولة -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-award"></i> قمة التميز التعليمي منذ 1995
+            </div>
+            <h1 class="hero-title">
+                رحلة التميز التعليمي<br>
+                <span>حيث يصنع المستقبل</span>
+            </h1>
+            <p class="hero-subtitle">
+                على مدى ثلاثة عقود من العطاء المتواصل، استطاعت مدرسة النخبة الدولية أن ترسم مساراً تعليمياً فريداً يجمع بين الأصالة والحداثة، محققةً تميزاً غير مسبوق في تخريج أجيال متكاملة الشخصية، مبدعة التفكير، وقادرة على صناعة التغيير الإيجابي في مجتمعاتها.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- قسم القصص -->
+    <section id="stories" class="achievements-section">
+        <div class="section-header">
+            <h2>رحلتنا التعليمية المتميزة</h2>
+            <p>مسيرة ثلاثين عاماً من العطاء والتميز في بناء الأجيال</p>
+        </div>
+
+        <!-- القصة الأولى -->
+        <div class="story-section">
+            <div class="full-width-image">
+                <img src="images/school-main.png"
+                     alt="حرم مدرسة النخبة الدولية">
+                <div class="image-overlay">
+                    <h3>الحرم التعليمي المتكامل</h3>
+                    <p>تجهيزات تعليمية عالمية في بيئة محفزة للإبداع والابتكار</p>
+                </div>
+            </div>
+            <div class="story-content">
+                <div class="content-header">
+                    <div class="content-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h2 class="content-title">حرم تعليمي متكامل لصناعة المستقبل</h2>
+                </div>
+               
+                <div class="content-description">
+                    <p>تم تصميم حرم مدرسة النخبة الدولية بعناية فائقة ليكون بيئة تعليمية محفزة للإبداع والابتكار. يشتمل الحرم على 24 قاعة دراسية ذكية مجهزة بأحدث التقنيات التعليمية التفاعلية، مختبرات علمية متطورة تشمل مختبر الروبوتات والذكاء الاصطناعي، مكتبة رقمية تضم أكثر من 50,000 عنوان، مسرح أكاديمي يتسع لـ 500 شخص، ملاعب رياضية أولمبية، ومساحات خضراء تصل إلى 40% من مساحة المدرسة.</p>
+                   
+                    <p>كل هذا في بيئة آمنة ومحفزة، مع أنظمة مراقبة ذكية وخدمات طبية متكاملة تعمل على مدار الساعة. تم تصميم الفصول الدراسية بحيث لا يتجاوز عدد الطلاب في الصف الواحد 25 طالباً، مما يضمن رعاية فردية واهتماماً شخصياً لكل طالب.</p>
+                </div>
+               
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <h4><i class="fas fa-ruler-combined"></i> المساحة الشاملة</h4>
+                        <p>75,000 متر مربع من المساحات التعليمية والترفيهية المخطط لها بعناية لخدمة العملية التعليمية</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-flask"></i> المختبرات المتخصصة</h4>
+                        <p>12 مختبراً في مختلف التخصصات العلمية والتقنية مجهزة بأحدث الأجهزة العالمية</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-book"></i> المكتبة الرقمية</h4>
+                        <p>أكثر من 50,000 عنوان في مختلف المجالات العلمية والأدبية متاحة للطلاب والباحثين</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-leaf"></i> البيئة المستدامة</h4>
+                        <p>40% من مساحة المدرسة عبارة عن مساحات خضراء تعمل على تنقية الهواء وتوفير بيئة صحية</p>
+                    </div>
+                </div>
+               
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-number">24</span>
+                        <span class="stat-label">قاعة دراسية ذكية</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">عنوان في المكتبة</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">مختبر متخصص</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">40%</span>
+                        <span class="stat-label">مساحات خضراء</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- القصة الثانية -->
+        <div class="story-section">
+            <div class="full-width-image">
+                <img src="images/english-kids.jpg"
+                     alt="المنهج التعليمي المتكامل">
+                <div class="image-overlay">
+                    <h3>المنهج التعليمي المتطور</h3>
+                    <p>دمج بين المناهج الدولية والقيم الوطنية والإبداع</p>
+                </div>
+            </div>
+            <div class="story-content">
+                <div class="content-header">
+                    <div class="content-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h2 class="content-title">منهجية تعليمية رائدة تواكب المستقبل</h2>
+                </div>
+               
+                <div class="content-description">
+                    <p>طورت مدرسة النخبة الدولية منهجاً تعليمياً فريداً يجمع بين أفضل المناهج الدولية (IB, Cambridge) والمعايير الوطنية، مع إضافة مساقات خاصة في الذكاء الاصطناعي والبرمجة، ريادة الأعمال والابتكار، المهارات القيادية، التفكير النقدي، الفنون والإبداع، والتربية المالية.</p>
+                   
+                    <p>يتم تدريس جميع المواد بلغتين (العربية والإنجليزية) مع التركيز على اللغة العربية كأساس واللغة الإنجليزية كوسيلة للانفتاح على العالم. يتم تحديث المنهج سنوياً بناءً على أحدث الأبحاث التعليمية ومتطلبات سوق العمل المستقبلية، مع تخصيص 30% من المنهج للمهارات الحياتية والتطبيق العملي.</p>
+                </div>
+               
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <h4><i class="fas fa-globe"></i> اللغات العالمية</h4>
+                        <p>تدريس 4 لغات: العربية كلغة أساسية، الإنجليزية كلغة ثانية، الفرنسية والصينية كلغات اختيارية</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-chart-line"></i> التخصصات المتقدمة</h4>
+                        <p>15+ مساق تخصصي في الذكاء الاصطناعي، الروبوتات، ريادة الأعمال، والابتكار التكنولوجي</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-graduation-cap"></i> الشراكة الجامعية</h4>
+                        <p>شراكة مع 50+ جامعة عالمية مرموقة لتسهيل قبول الخريجين وضمان جودة التعليم</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-laptop-code"></i> التقنية المتكاملة</h4>
+                        <p>دمج التكنولوجيا في جميع جوانب العملية التعليمية مع تدريب مستمر للطلاب على المهارات الرقمية</p>
+                    </div>
+                </div>
+               
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-number">4</span>
+                        <span class="stat-label">لغات عالمية</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">مساق تخصصي</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">98%</span>
+                        <span class="stat-label">قبول جامعي</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">جامعة شريكة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- القصة الثالثة -->
+        <div class="story-section">
+            <div class="full-width-image">
+                <img src="images/teacher-class.jpg"
+                     alt="هيئة التدريس المتميزة">
+                <div class="image-overlay">
+                    <h3>هيئة التدريس المتميزة</h3>
+                    <p>خبراء تعليم معتمدون دولياً ومبدعون في التدريس</p>
+                </div>
+            </div>
+            <div class="story-content">
+                <div class="content-header">
+                    <div class="content-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h2 class="content-title">صُناع التميز: هيئة تدريسية عالمية المستوى</h2>
+                </div>
+               
+                <div class="content-description">
+                    <p>تضم مدرسة النخبة الدولية نخبة من أفضل المعلمين والمعلمات المؤهلين تأهيلاً عالياً، حيث 65% من أعضاء هيئة التدريس يحملون درجة الماجستير أو الدكتوراه من جامعات عالمية مرموقة، جميع المعلمين معتمدون دولياً في أساليب التدريس الحديثة، ويتم تدريبهم سنوياً في أفضل المؤسسات التعليمية العالمية.</p>
+                   
+                    <p>نسبة المعلمين إلى الطلاب لا تتعدى 1:10 مما يضمن رعاية فردية لكل طالب. يتميز المعلمون بالشغف التعليمي، الابتكار في التدريس، والقدرة على إلهام الطلاب وتحفيزهم لتحقيق أقصى إمكاناتهم. تم تصميم برنامج تدريبي سنوي يتضمن ورش عمل، مؤتمرات دولية، وتبادل خبرات مع أفضل المؤسسات التعليمية العالمية.</p>
+                </div>
+               
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <h4><i class="fas fa-user-graduate"></i> المؤهلات العليا</h4>
+                        <p>65% من الهيئة التدريسية يحملون درجة الماجستير والدكتوراه من جامعات عالمية مرموقة</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-award"></i> التدريب المستمر</h4>
+                        <p>50+ ساعة تدريبية سنوياً لكل معلم في أحدث الأساليب التعليمية والتقنيات الحديثة</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-globe-americas"></i> التنوع الثقافي</h4>
+                        <p>هيئة تدريسية تمثل 15 جنسية مختلفة، مما يثري البيئة التعليمية بالتنوع والخبرات العالمية</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4><i class="fas fa-handshake"></i> الرعاية الفردية</h4>
+                        <p>نسبة 1:10 للمعلمين إلى الطلاب تضمن متابعة فردية ودعم شخصي لكل طالب</p>
+                    </div>
+                </div>
+               
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-number">1:10</span>
+                        <span class="stat-label">نسبة المعلم للطلاب</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">65%</span>
+                        <span class="stat-label">معلمين بدرجات عليا</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">معلمين معتمدين</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">15</span>
+                        <span class="stat-label">جنسية مختلفة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الفلسفة -->
+    <section id="philosophy" class="philosophy-section">
+        <div class="philosophy-content">
+            <h2>فلسفتنا التعليمية: صناعة القادة</h2>
+            <p>
+                نحن لا ندرس المناهج فقط، بل نصنع الشخصيات. فلسفتنا التعليمية تقوم على إيمان راسخ بأن كل طالب هو عالم قائم بذاته، يحمل إمكانيات غير محدودة. مهمتنا ليست نقل المعلومات، بل إيقاد شغف التعلم، تنمية التفكير النقدي، وغرس القيم الإنسانية السامية. نؤمن بأن التميز الحقيقي ليس في الدرجات فقط، بل في بناء شخصية متكاملة، مفكرة، مبدعة، وقادرة على إحداث فرق إيجابي في العالم. رؤيتنا تتجاوز التعليم التقليدي إلى صناعة قادة المستقبل الذين سيغيرون العالم للأفضل.
+            </p>
+        </div>
+    </section>
+
+    <!-- التذييل المبسط -->
+    <footer class="footer">
+        <div class="copyright">
+            <p>جميع الحقوق محفوظة &copy; 2025 مدرسة النخبة الدولية | رحلة التميز التعليمي</p>
+        </div>
+    </footer>
+
+    <script>
+        // تنشيط الرسوم المتحركة عند التمرير
+        document.addEventListener('DOMContentLoaded', function() {
+            const storySections = document.querySelectorAll('.story-section');
+           
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -100px 0px'
+            });
+           
+            storySections.forEach((section, index) => {
+                section.style.transitionDelay = `${index * 0.2}s`;
+                observer.observe(section);
+            });
+           
+            // تأثير التمرير السلس للروابط
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                   
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
