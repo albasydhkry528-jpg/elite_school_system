@@ -2,7 +2,6 @@
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
 
-
 // بدء الجلسة إذا لم تكن بدأت
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -96,62 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = "حدث خطأ أثناء حذف الدرجة: " . $conn->error;
         }
         $stmt->close();
-    }
-   
-    // معالجة إضافة درجات دفعة واحدة
-    if (isset($_POST['bulk_add'])) {
-        $class_id = clean_input($_POST['class_id']);
-        $subject_id = clean_input($_POST['subject_id']);
-        $teacher_id = clean_input($_POST['teacher_id']);
-        $exam_type = clean_input($_POST['exam_type']);
-        $max_grade = clean_input($_POST['max_grade']);
-       
-        // الحصول على جميع طلاب الصف
-        $students_sql = "SELECT s.id, s.student_code, u.full_name
-                        FROM students s
-                        JOIN users u ON s.user_id = u.id
-                        JOIN class_students cs ON s.id = cs.student_id
-                        WHERE cs.class_id = ? AND cs.is_active = 1";
-        $students_stmt = $conn->prepare($students_sql);
-        $students_stmt->bind_param("i", $class_id);
-        $students_stmt->execute();
-        $students_result = $students_stmt->get_result();
-       
-        $added_count = 0;
-       
-        while ($student = $students_result->fetch_assoc()) {
-            $grade_input_name = "grade_" . $student['id'];
-           
-            if (isset($_POST[$grade_input_name]) && $_POST[$grade_input_name] !== '') {
-                $grade = clean_input($_POST[$grade_input_name]);
-               
-                // التحقق من عدم وجود درجة مسبقة
-                $check_sql = "SELECT id FROM grades WHERE student_id = ? AND subject_id = ?
-                            AND class_id = ? AND exam_type = ?";
-                $check_stmt = $conn->prepare($check_sql);
-                $check_stmt->bind_param("iiis", $student['id'], $subject_id, $class_id, $exam_type);
-                $check_stmt->execute();
-               
-                if ($check_stmt->get_result()->num_rows == 0) {
-                    // إضافة الدرجة
-                    $insert_sql = "INSERT INTO grades (student_id, subject_id, class_id,
-                                  teacher_id, exam_type, grade, max_grade)
-                                  VALUES (?, ?, ?, ?, ?, ?, ?)";
-                    $insert_stmt = $conn->prepare($insert_sql);
-                    $insert_stmt->bind_param("iiiisdi", $student['id'], $subject_id, $class_id,
-                                           $teacher_id, $exam_type, $grade, $max_grade);
-                    $insert_stmt->execute();
-                    $insert_stmt->close();
-                    $added_count++;
-                }
-                $check_stmt->close();
-            }
-        }
-       
-        $students_stmt->close();
-        $message = "تم إضافة $added_count درجة بنجاح";
-        log_action($_SESSION['user_id'], 'bulk_add_grades',
-                  "تم إضافة درجات دفعة واحدة للصف ID: $class_id والمادة ID: $subject_id");
     }
    
     // معالجة حساب المجموع والمعدل للطالب
@@ -473,9 +416,6 @@ $stats = $stats_result->fetch_assoc();
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addGradeModal">
                                 <i class="fas fa-plus"></i> إضافة
                             </button>
-                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#bulkAddModal">
-                                <i class="fas fa-file-import"></i> دفعة
-                            </button>
                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#calculateModal">
                                 <i class="fas fa-calculator"></i> حساب
                             </button>
@@ -510,9 +450,6 @@ $stats = $stats_result->fetch_assoc();
                     <div class="col-md-4 text-end">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGradeModal">
                             <i class="fas fa-plus"></i> إضافة درجة جديدة
-                        </button>
-                        <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#bulkAddModal">
-                            <i class="fas fa-file-import"></i> إضافة دفعة
                         </button>
                     </div>
                 </div>
@@ -752,100 +689,6 @@ $stats = $stats_result->fetch_assoc();
         </div>
     </div>
 
-    <!-- مودال إضافة دفعة -->
-    <div class="modal fade" id="bulkAddModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <form method="POST" action="">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-file-import"></i> إضافة درجات دفعة واحدة
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> أدخل درجات جميع طلاب الصف في المادة المحددة
-                        </div>
-                       
-                        <div class="row mb-4">
-                            <div class="col-md-4">
-                                <label class="form-label">الصف *</label>
-                                <select class="form-select" name="class_id" id="bulk_class" required>
-                                    <option value="">اختر الصف...</option>
-                                    <?php
-                                    // إعادة تعيين مؤشر النتائج
-                                    $classes->data_seek(0);
-                                    while ($class = $classes->fetch_assoc()): ?>
-                                        <option value="<?php echo $class['id']; ?>">
-                                            <?php echo $class['grade']; ?> - <?php echo $class['class_name']; ?>
-                                        </option>
-                                    <?php endwhile; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">المادة *</label>
-                                <select class="form-select" name="subject_id" required>
-                                    <option value="">اختر المادة...</option>
-                                    <?php
-                                    $subjects->data_seek(0);
-                                    while ($subject = $subjects->fetch_assoc()): ?>
-                                        <option value="<?php echo $subject['id']; ?>">
-                                            <?php echo $subject['subject_name']; ?>
-                                        </option>
-                                    <?php endwhile; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">المعلم *</label>
-                                <select class="form-select" name="teacher_id" required>
-                                    <option value="">اختر المعلم...</option>
-                                    <?php
-                                    $teachers->data_seek(0);
-                                    while ($teacher = $teachers->fetch_assoc()): ?>
-                                        <option value="<?php echo $teacher['id']; ?>">
-                                            <?php echo $teacher['full_name']; ?>
-                                        </option>
-                                    <?php endwhile; ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label">نوع الاختبار *</label>
-                                <select class="form-select" name="exam_type" required>
-                                    <option value="">اختر نوع الاختبار...</option>
-                                    <option value="اختبار قصير">اختبار قصير</option>
-                                    <option value="منتصف الفصل">منتصف الفصل</option>
-                                    <option value="نهاية الفصل">نهاية الفصل</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">الدرجة القصوى *</label>
-                                <input type="number" class="form-control" name="max_grade"
-                                       value="100" required>
-                            </div>
-                        </div>
-                       
-                        <div id="studentsList">
-                            <div class="alert alert-warning text-center">
-                                <i class="fas fa-exclamation-triangle"></i> اختر الصف أولاً لعرض قائمة الطلاب
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fas fa-times"></i> إلغاء
-                        </button>
-                        <button type="submit" name="bulk_add" class="btn btn-success">
-                            <i class="fas fa-save"></i> حفظ جميع الدرجات
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- مودال تعديل الدرجة -->
     <div class="modal fade" id="editGradeModal" tabindex="-1">
         <div class="modal-dialog">
@@ -978,35 +821,6 @@ $stats = $stats_result->fetch_assoc();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // دالة تحميل طلاب الصف لإضافة الدفعة
-        document.getElementById('bulk_class').addEventListener('change', function() {
-            var classId = this.value;
-           
-            if (!classId) {
-                document.getElementById('studentsList').innerHTML =
-                    '<div class="alert alert-warning text-center">' +
-                    '<i class="fas fa-exclamation-triangle"></i> اختر الصف أولاً لعرض قائمة الطلاب</div>';
-                return;
-            }
-           
-            // إظهار مؤشر التحميل
-            document.getElementById('studentsList').innerHTML =
-                '<div class="text-center py-4">' +
-                '<div class="spinner-border text-primary" role="status"></div>' +
-                '<p class="mt-2">جاري تحميل قائمة الطلاب...</p></div>';
-           
-            fetch('ajax_get_students.php?class_id=' + classId)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('studentsList').innerHTML = data;
-                })
-                .catch(error => {
-                    document.getElementById('studentsList').innerHTML =
-                        '<div class="alert alert-danger text-center">' +
-                        '<i class="fas fa-exclamation-circle"></i> حدث خطأ في تحميل البيانات</div>';
-                });
-        });
-       
         // دالة تعديل الدرجة
         function editGrade(id, grade, maxGrade, notes) {
             document.getElementById('edit_grade_id').value = id;
