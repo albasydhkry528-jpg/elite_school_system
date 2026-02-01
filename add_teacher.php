@@ -246,9 +246,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   
                     $conn->commit();
                   
-                    $_SESSION['success'] = "تم إضافة المعلم <strong>{$full_name}</strong> بنجاح!";
-                    header("Location: admin.php?section=teachers");
-                    exit;
+                    // تعيين رسالة النجاح وعرضها في نفس الصفحة
+                    $success_message = "تم إضافة المعلم <strong>{$full_name}</strong> بنجاح!";
+                    
+                    // إعادة توليد رقم معلم جديد للاستخدام التالي
+                    $teacher_code = generateTeacherCode($conn);
+                    
+                    // إعادة تعيين متغيرات النموذج (اختياري)
+                    $full_name = $username = $email = $phone = $birth_date = $national_id = $address = $specialization = $qualification = $additional_notes = '';
+                    $experience_years = 0;
+                    $salary = 0;
+                    $hire_date = date('Y-m-d');
+                    
                 } else {
                     throw new Exception("فشل في إضافة بيانات المعلم: " . $teacher_stmt->error);
                 }
@@ -1133,6 +1142,16 @@ $subjects_result = $conn->query($subjects_query);
         </div>
 
         <!-- رسائل التنبيه -->
+        <?php if($success_message): ?>
+            <div class="alert alert-success full-width">
+                <i class="fas fa-check-circle fa-2x"></i>
+                <div>
+                    <strong>نجاح!</strong>
+                    <p><?php echo $success_message; ?></p>
+                </div>
+            </div>
+        <?php endif; ?>
+        
         <?php if($error_message): ?>
             <div class="alert alert-danger full-width">
                 <i class="fas fa-exclamation-circle fa-2x"></i>
@@ -1226,7 +1245,7 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <input type="text" id="full_name" name="full_name" class="form-control"
                                        placeholder="أدخل الاسم الكامل ثلاثي" required
-                                       oninput="validateField(this, 'text')">
+                                       oninput="validateField(this, 'text')" value="<?php echo isset($_POST['full_name']) ? htmlspecialchars($_POST['full_name']) : ''; ?>">
                                 <div class="validation-message" id="full_name_validation"></div>
                             </div>
                           
@@ -1237,7 +1256,7 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <input type="text" id="username" name="username" class="form-control"
                                        placeholder="يستخدم لتسجيل الدخول" required
-                                       oninput="validateUsername(this)">
+                                       oninput="validateUsername(this)" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                                 <div class="validation-message" id="username_validation"></div>
                             </div>
                           
@@ -1248,7 +1267,7 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <input type="email" id="email" name="email" class="form-control"
                                        placeholder="example@school.com" required
-                                       oninput="validateEmail(this)">
+                                       oninput="validateEmail(this)" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                                 <div class="validation-message" id="email_validation"></div>
                             </div>
                         </div>
@@ -1295,7 +1314,7 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <input type="tel" id="phone" name="phone" class="form-control"
                                        placeholder="05XXXXXXXX" required
-                                       oninput="validatePhone(this)">
+                                       oninput="validatePhone(this)" value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
                                 <div class="validation-message" id="phone_validation"></div>
                             </div>
                         </div>
@@ -1317,7 +1336,7 @@ $subjects_result = $conn->query($subjects_query);
                                     <i class="fas fa-birthday-cake"></i>
                                     <span class="required">*</span> تاريخ الميلاد
                                 </label>
-                                <input type="date" id="birth_date" name="birth_date" class="form-control" required>
+                                <input type="date" id="birth_date" name="birth_date" class="form-control" required value="<?php echo isset($_POST['birth_date']) ? htmlspecialchars($_POST['birth_date']) : ''; ?>">
                             </div>
                           
                             <div class="form-group">
@@ -1326,8 +1345,8 @@ $subjects_result = $conn->query($subjects_query);
                                     الجنس
                                 </label>
                                 <select id="gender" name="gender" class="form-control">
-                                    <option value="male">ذكر</option>
-                                    <option value="female">أنثى</option>
+                                    <option value="male" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'male') ? 'selected' : ''; ?>>ذكر</option>
+                                    <option value="female" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'female') ? 'selected' : ''; ?>>أنثى</option>
                                 </select>
                             </div>
                           
@@ -1338,7 +1357,7 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <input type="text" id="national_id" name="national_id" class="form-control"
                                        placeholder="10 أرقام" required
-                                       oninput="validateNationalId(this)">
+                                       oninput="validateNationalId(this)" value="<?php echo isset($_POST['national_id']) ? htmlspecialchars($_POST['national_id']) : ''; ?>">
                                 <div class="validation-message" id="national_id_validation"></div>
                             </div>
                         </div>
@@ -1356,7 +1375,7 @@ $subjects_result = $conn->query($subjects_query);
                                     العنوان
                                 </label>
                                 <textarea id="address" name="address" class="form-control"
-                                          rows="4" placeholder="العنوان التفصيلي"></textarea>
+                                          rows="4" placeholder="العنوان التفصيلي"><?php echo isset($_POST['address']) ? htmlspecialchars($_POST['address']) : ''; ?></textarea>
                             </div>
                           
                             <div class="info-card" style="margin-top: 20px;">
@@ -1387,7 +1406,7 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <input type="text" id="teacher_code" name="teacher_code"
                                        class="form-control" placeholder="اتركه فارغاً للتوليد التلقائي"
-                                       value="<?php echo $teacher_code; ?>">
+                                       value="<?php echo isset($_POST['teacher_code']) ? htmlspecialchars($_POST['teacher_code']) : $teacher_code; ?>">
                                 <small style="color: #666; display: block; margin-top: 8px;">
                                     <i class="fas fa-info-circle"></i> سيتم توليد رقم تلقائي إذا تركت الحقل فارغاً
                                 </small>
@@ -1400,16 +1419,16 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <select id="specialization" name="specialization" class="form-control" required>
                                     <option value="">اختر التخصص</option>
-                                    <option value="رياضيات">الرياضيات</option>
-                                    <option value="علوم">العلوم</option>
-                                    <option value="لغة عربية">اللغة العربية</option>
-                                    <option value="لغة إنجليزية">اللغة الإنجليزية</option>
-                                    <option value="اجتماعيات">الاجتماعيات</option>
-                                    <option value="تكنولوجيا">تكنولوجيا المعلومات</option>
-                                    <option value="تربية إسلامية">التربية الإسلامية</option>
-                                    <option value="تربية بدنية">التربية البدنية</option>
-                                    <option value="فنون">الفنون</option>
-                                    <option value="موسيقى">الموسيقى</option>
+                                    <option value="رياضيات" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'رياضيات') ? 'selected' : ''; ?>>الرياضيات</option>
+                                    <option value="علوم" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'علوم') ? 'selected' : ''; ?>>العلوم</option>
+                                    <option value="لغة عربية" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'لغة عربية') ? 'selected' : ''; ?>>اللغة العربية</option>
+                                    <option value="لغة إنجليزية" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'لغة إنجليزية') ? 'selected' : ''; ?>>اللغة الإنجليزية</option>
+                                    <option value="اجتماعيات" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'اجتماعيات') ? 'selected' : ''; ?>>الاجتماعيات</option>
+                                    <option value="تكنولوجيا" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'تكنولوجيا') ? 'selected' : ''; ?>>تكنولوجيا المعلومات</option>
+                                    <option value="تربية إسلامية" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'تربية إسلامية') ? 'selected' : ''; ?>>التربية الإسلامية</option>
+                                    <option value="تربية بدنية" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'تربية بدنية') ? 'selected' : ''; ?>>التربية البدنية</option>
+                                    <option value="فنون" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'فنون') ? 'selected' : ''; ?>>الفنون</option>
+                                    <option value="موسيقى" <?php echo (isset($_POST['specialization']) && $_POST['specialization'] == 'موسيقى') ? 'selected' : ''; ?>>الموسيقى</option>
                                 </select>
                             </div>
                           
@@ -1424,10 +1443,14 @@ $subjects_result = $conn->query($subjects_query);
                                     // إعادة المؤشر لبداية النتيجة
                                     $subjects_result->data_seek(0);
                                     while($subject = $subjects_result->fetch_assoc()):
+                                        $checked = '';
+                                        if(isset($_POST['subjects']) && in_array($subject['subject_name'], $_POST['subjects'])) {
+                                            $checked = 'checked';
+                                        }
                                     ?>
                                     <div class="checkbox-item">
                                         <input type="checkbox" id="subject_<?php echo $subject['id']; ?>"
-                                               name="subjects[]" value="<?php echo htmlspecialchars($subject['subject_name']); ?>">
+                                               name="subjects[]" value="<?php echo htmlspecialchars($subject['subject_name']); ?>" <?php echo $checked; ?>>
                                         <label for="subject_<?php echo $subject['id']; ?>"><?php echo htmlspecialchars($subject['subject_name']); ?></label>
                                     </div>
                                     <?php endwhile; ?>
@@ -1455,10 +1478,10 @@ $subjects_result = $conn->query($subjects_query);
                                 </label>
                                 <select id="qualification" name="qualification" class="form-control">
                                     <option value="">اختر المؤهل</option>
-                                    <option value="دبلوم">دبلوم</option>
-                                    <option value="بكالوريوس">بكالوريوس</option>
-                                    <option value="ماجستير">ماجستير</option>
-                                    <option value="دكتوراه">دكتوراه</option>
+                                    <option value="دبلوم" <?php echo (isset($_POST['qualification']) && $_POST['qualification'] == 'دبلوم') ? 'selected' : ''; ?>>دبلوم</option>
+                                    <option value="بكالوريوس" <?php echo (isset($_POST['qualification']) && $_POST['qualification'] == 'بكالوريوس') ? 'selected' : ''; ?>>بكالوريوس</option>
+                                    <option value="ماجستير" <?php echo (isset($_POST['qualification']) && $_POST['qualification'] == 'ماجستير') ? 'selected' : ''; ?>>ماجستير</option>
+                                    <option value="دكتوراه" <?php echo (isset($_POST['qualification']) && $_POST['qualification'] == 'دكتوراه') ? 'selected' : ''; ?>>دكتوراه</option>
                                 </select>
                             </div>
                           
@@ -1468,7 +1491,7 @@ $subjects_result = $conn->query($subjects_query);
                                     سنوات الخبرة
                                 </label>
                                 <input type="number" id="experience_years" name="experience_years"
-                                       class="form-control" min="0" max="50" value="0">
+                                       class="form-control" min="0" max="50" value="<?php echo isset($_POST['experience_years']) ? htmlspecialchars($_POST['experience_years']) : '0'; ?>">
                             </div>
                           
                             <div class="form-group">
@@ -1477,7 +1500,7 @@ $subjects_result = $conn->query($subjects_query);
                                     الراتب الشهري (ريال)
                                 </label>
                                 <input type="number" id="salary" name="salary" class="form-control"
-                                       min="0" step="100" placeholder="0">
+                                       min="0" step="100" placeholder="0" value="<?php echo isset($_POST['salary']) ? htmlspecialchars($_POST['salary']) : ''; ?>">
                             </div>
                           
                             <div class="form-group">
@@ -1486,7 +1509,7 @@ $subjects_result = $conn->query($subjects_query);
                                     تاريخ التعيين
                                 </label>
                                 <input type="date" id="hire_date" name="hire_date" class="form-control"
-                                       value="<?php echo date('Y-m-d'); ?>">
+                                       value="<?php echo isset($_POST['hire_date']) ? htmlspecialchars($_POST['hire_date']) : date('Y-m-d'); ?>">
                             </div>
                         </div>
                     </div>
@@ -1513,10 +1536,14 @@ $subjects_result = $conn->query($subjects_query);
                                     // إعادة المؤشر لبداية النتيجة
                                     $classes_result->data_seek(0);
                                     while($class = $classes_result->fetch_assoc()):
+                                        $checked = '';
+                                        if(isset($_POST['assigned_classes']) && in_array($class['id'], $_POST['assigned_classes'])) {
+                                            $checked = 'checked';
+                                        }
                                     ?>
                                     <div class="multi-select-item">
                                         <input type="checkbox" id="class_<?php echo $class['id']; ?>"
-                                               name="assigned_classes[]" value="<?php echo $class['id']; ?>">
+                                               name="assigned_classes[]" value="<?php echo $class['id']; ?>" <?php echo $checked; ?>>
                                         <label for="class_<?php echo $class['id']; ?>">
                                             <?php echo htmlspecialchars($class['class_name'] . ' - ' . $class['grade'] . ' (' . $class['section'] . ')'); ?>
                                         </label>
@@ -1548,22 +1575,25 @@ $subjects_result = $conn->query($subjects_query);
                                     أدوار إضافية
                                 </label>
                                 <div class="checkbox-group">
+                                    <?php
+                                    $roles = [
+                                        'coordinator' => 'منسق الصفوف',
+                                        'examiner' => 'مراقب امتحانات',
+                                        'activity' => 'مشرف أنشطة',
+                                        'committee' => 'عضو لجنة'
+                                    ];
+                                    
+                                    foreach($roles as $value => $label):
+                                        $checked = '';
+                                        if(isset($_POST['additional_roles']) && in_array($value, $_POST['additional_roles'])) {
+                                            $checked = 'checked';
+                                        }
+                                    ?>
                                     <div class="checkbox-item">
-                                        <input type="checkbox" id="role_coordinator" name="additional_roles[]" value="coordinator">
-                                        <label for="role_coordinator">منسق الصفوف</label>
+                                        <input type="checkbox" id="role_<?php echo $value; ?>" name="additional_roles[]" value="<?php echo $value; ?>" <?php echo $checked; ?>>
+                                        <label for="role_<?php echo $value; ?>"><?php echo $label; ?></label>
                                     </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="role_examiner" name="additional_roles[]" value="examiner">
-                                        <label for="role_examiner">مراقب امتحانات</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="role_activity" name="additional_roles[]" value="activity">
-                                        <label for="role_activity">مشرف أنشطة</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="role_committee" name="additional_roles[]" value="committee">
-                                        <label for="role_committee">عضو لجنة</label>
-                                    </div>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                           
@@ -1573,7 +1603,7 @@ $subjects_result = $conn->query($subjects_query);
                                     ملاحظات إضافية
                                 </label>
                                 <textarea id="additional_notes" name="additional_notes" class="form-control"
-                                          rows="4" placeholder="أي ملاحظات إضافية عن المعلم..."></textarea>
+                                          rows="4" placeholder="أي ملاحظات إضافية عن المعلم..."><?php echo isset($_POST['additional_notes']) ? htmlspecialchars($_POST['additional_notes']) : ''; ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -1875,10 +1905,7 @@ $subjects_result = $conn->query($subjects_query);
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإضافة...';
                 submitBtn.disabled = true;
               
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }, 3000);
+                // استمرار الإرسال - لا يتم إلغاؤه
             }
         });
       

@@ -345,7 +345,7 @@ if ($schoolInfo && $schoolInfo->num_rows > 0) {
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('images/th.jpg');
+             background-image: url('images/th.jpg');
             background-position: center center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -1553,39 +1553,59 @@ if ($schoolInfo && $schoolInfo->num_rows > 0) {
     </header>
 
     <!-- ===== قسم البطل مع الصورة المتحركة ===== -->
-    <section class="hero" id="hero">
-        <!-- خلفية متحركة مبهرة -->
-        <div class="hero-background"></div>
-        
-        <!-- طبقة تدرج لوني فوق الصورة -->
-        <div class="hero-overlay"></div>
-        
-        <!-- المحتوى الرئيسي -->
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-content-inner">
-                    <h1 class="hero-title animate__animated animate__fadeInUp">
-                        مرحباً بكم في <span style="display:block;">مدرسة النخبة الدولية</span>
-                    </h1>
-                    <p class="hero-subtitle animate__animated animate__fadeInUp">
-                        نصنع جيلاً متميزاً علمياً وأخلاقياً لمستقبل أفضل. نؤمن بأن التعليم هو الأساس لبناء مجتمع متطور ومزدهر.
-                        نقدم تعليماً نوعياً باستخدام أحدث الوسائل التكنولوجية وبتوجيه من نخبة المعلمين.
-                    </p>
-                   
-                    <div class="cta-buttons">
-                        <a href="register_student_parent.php" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i>
-                            <span>سجل ابنك الآن</span>
-                        </a>
-                        <a href="#activities" class="btn btn-secondary">
-                            <i class="fas fa-eye"></i>
-                            <span>استكشف الأنشطة</span>
-                        </a>
-                    </div>
+   <!-- ===== قسم البطل مع الصورة المتحركة ===== -->
+<section class="hero" id="hero" style="
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    background: linear-gradient(135deg, rgba(123, 44, 191, 0.9), rgba(6, 214, 160, 0.9)),
+                url('images/th.jpg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+">
+    
+    <div class="container">
+        <div class="hero-content" style="
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            color: white;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+        ">
+            <div class="hero-content-inner">
+                <h1 class="hero-title animate__animated animate__fadeInUp">
+                    مرحباً بكم في <span style="display:block;">مدرسة النخبة الدولية</span>
+                </h1>
+                <p class="hero-subtitle animate__animated animate__fadeInUp">
+                    نصنع جيلاً متميزاً علمياً وأخلاقياً لمستقبل أفضل. نؤمن بأن التعليم هو الأساس لبناء مجتمع متطور ومزدهر.
+                    نقدم تعليماً نوعياً باستخدام أحدث الوسائل التكنولوجية وبتوجيه من نخبة المعلمين.
+                </p>
+               
+                <div class="cta-buttons">
+                    <a href="register_student_parent.php" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        <span>سجل ابنك الآن</span>
+                    </a>
+                    <a href="#activities" class="btn btn-secondary">
+                        <i class="fas fa-eye"></i>
+                        <span>استكشف الأنشطة</span>
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- ===== قسم الإحصائيات ===== -->
     <section class="stats-section" id="stats">
