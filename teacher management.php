@@ -85,10 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_teacher'])) {
     $employment_type = clean_input($_POST['employment_type']);
     $salary = clean_input($_POST['salary']);
     $experience_years = clean_input($_POST['experience_years']);
-    $bank_name = clean_input($_POST['bank_name']);
-    $bank_account = clean_input($_POST['bank_account']);
-    $office_number = clean_input($_POST['office_number']);
-    $office_hours = clean_input($_POST['office_hours']);
     $user_status = clean_input($_POST['user_status']);
     
     // الحصول على user_id للمعلم
@@ -126,17 +122,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_teacher'])) {
                     hire_date = ?, 
                     employment_type = ?, 
                     salary = ?, 
-                    experience_years = ?, 
-                    bank_name = ?, 
-                    bank_account = ?, 
-                    office_number = ?, 
-                    office_hours = ? 
+                    experience_years = ? 
                     WHERE id = ?";
             $stmt2 = $conn->prepare($sql2);
-            $stmt2->bind_param("ssssssisssssi", 
+            $stmt2->bind_param("ssssssisi", 
                 $national_id, $birth_date, $qualification, $specialization, 
-                $hire_date, $employment_type, $salary, $experience_years, 
-                $bank_name, $bank_account, $office_number, $office_hours, $teacher_id);
+                $hire_date, $employment_type, $salary, $experience_years, $teacher_id);
             $stmt2->execute();
             
             // تأكيد المعاملة
@@ -184,10 +175,6 @@ $sql = "SELECT
             t.employment_type,
             t.salary,
             t.experience_years,
-            t.bank_name,
-            t.bank_account,
-            t.office_number,
-            t.office_hours,
             t.user_id,
             u.full_name,
             u.email,
@@ -285,7 +272,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             --dark-color: #2d3436;
             --light-color: #f8f9fa;
             --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --gradient-success: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
             --gradient-warning: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
             --gradient-danger: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
@@ -314,7 +300,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -551,30 +537,15 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
         }
 
         .teachers-table thead th {
-            padding: 22px 20px;
-            text-align: right;
+            padding: 20px 15px;
+            text-align: center;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: white;
             border-bottom: 3px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
-        }
-
-        .teachers-table thead th::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            transform: translateX(100%);
-            transition: transform 0.6s ease;
-        }
-
-        .teachers-table thead th:hover::after {
-            transform: translateX(-100%);
+            white-space: nowrap;
         }
 
         .teachers-table tbody tr {
@@ -589,31 +560,31 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
 
         .teachers-table tbody tr:hover {
             background: linear-gradient(90deg, rgba(0, 176, 155, 0.05) 0%, rgba(150, 201, 61, 0.05) 100%);
-            transform: translateX(-10px);
+            transform: translateX(-5px);
             box-shadow: 0 5px 15px rgba(0, 176, 155, 0.1);
         }
 
         .teachers-table tbody td {
-            padding: 20px;
-            text-align: right;
+            padding: 20px 15px;
+            text-align: center;
             vertical-align: middle;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-left: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        /* Teacher Info Card */
-        .teacher-card {
+        .teachers-table tbody td:first-child {
+            border-left: none;
+        }
+
+        /* Teacher Profile Card */
+        .teacher-profile-card {
             display: flex;
             align-items: center;
             gap: 20px;
+            margin-bottom: 15px;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.8);
+            background: linear-gradient(135deg, rgba(0, 176, 155, 0.1) 0%, rgba(150, 201, 61, 0.1) 100%);
             border-radius: var(--border-radius-sm);
-            transition: var(--transition);
-        }
-
-        .teacher-card:hover {
-            background: white;
-            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0, 176, 155, 0.2);
         }
 
         .teacher-avatar {
@@ -627,66 +598,233 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
         }
 
         .teacher-avatar:hover {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(0, 176, 155, 0.4);
         }
 
-        .teacher-info-content {
+        .teacher-basic-info {
             flex: 1;
+            text-align: right;
         }
 
         .teacher-name {
-            font-weight: 700;
+            font-weight: 800;
             color: var(--dark-color);
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .teacher-email {
-            color: #666;
-            font-size: 0.95rem;
+            font-size: 1.3rem;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .teacher-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
             gap: 8px;
         }
 
-        .teacher-id {
+        /* Info Cards */
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(67, 97, 238, 0.2);
+        }
+
+        .info-card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .info-card-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .info-item-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #777;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            color: #333;
+            font-weight: 700;
+            text-align: right;
+            padding: 8px 12px;
+            background: rgba(248, 249, 250, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .info-value.highlight {
             background: var(--gradient-primary);
             color: white;
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
             box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
         }
 
-        /* Action Buttons */
-        .action-buttons {
+        .info-value.success {
+            background: var(--gradient-success);
+            color: white;
+            box-shadow: 0 3px 10px rgba(0, 176, 155, 0.3);
+        }
+
+        .info-value.warning {
+            background: var(--gradient-warning);
+            color: #333;
+            box-shadow: 0 3px 10px rgba(253, 203, 110, 0.3);
+        }
+
+        /* Class Badges */
+        .class-badges-container {
+            padding: 10px;
+        }
+
+        .class-badge {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 10px 18px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .class-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .no-classes {
+            background: rgba(240, 240, 240, 0.8);
+            color: #666;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-style: italic;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Status Badge */
+        .status-container {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .status-badge {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
             gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            min-width: 120px;
             justify-content: center;
         }
 
+        .status-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-active {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .status-inactive {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        .status-suspended {
+            background: var(--gradient-warning);
+            color: #333;
+        }
+
+        /* Action Buttons */
+        .action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+            height: 100%;
+        }
+
         .btn-action {
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 600;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-weight: 700;
             font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: var(--transition);
             cursor: pointer;
             border: none;
             color: white;
             box-shadow: var(--shadow-soft);
+            justify-content: center;
+            min-width: 140px;
         }
 
         .btn-action:hover {
@@ -700,7 +838,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
 
         .btn-edit:hover {
             background: linear-gradient(135deg, #5a6fd8 0%, #6a4090 100%);
-            color: white;
         }
 
         .btn-delete {
@@ -709,137 +846,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
 
         .btn-delete:hover {
             background: linear-gradient(135deg, #e76c7c 0%, #e8a798 100%);
-            color: white;
-        }
-
-        /* Badge Styles */
-        .badge-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .badge {
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .badge-primary {
-            background: var(--gradient-primary);
-            color: white;
-        }
-
-        .badge-success {
-            background: var(--gradient-success);
-            color: white;
-        }
-
-        .badge-warning {
-            background: var(--gradient-warning);
-            color: #333;
-        }
-
-        .badge-danger {
-            background: var(--gradient-danger);
-            color: white;
-        }
-
-        .badge-info {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .badge-purple {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .badge-light {
-            background: rgba(248, 249, 250, 0.8);
-            color: #333;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        /* Class Badges */
-        .class-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            min-height: 45px;
-            align-items: center;
-        }
-
-        .class-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
-        }
-
-        .class-badge:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .class-badge.empty {
-            background: rgba(240, 240, 240, 0.8);
-            color: #666;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-style: italic;
-            box-shadow: none;
-        }
-
-        /* Status Badge */
-        .status-badge {
-            padding: 10px 24px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-        }
-
-        .status-badge:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-        }
-
-        .status-active {
-            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
-            color: white;
-        }
-
-        .status-inactive {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-            color: #721c24;
-        }
-
-        .status-suspended {
-            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-            color: #856404;
         }
 
         /* Modal Styles */
@@ -865,7 +871,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             padding: 30px;
             border-radius: var(--border-radius-lg);
             width: 90%;
-            max-width: 700px;
+            max-width: 600px;
             max-height: 85vh;
             overflow-y: auto;
             box-shadow: var(--shadow-strong);
@@ -921,6 +927,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             margin-bottom: 8px;
             font-weight: 600;
             color: #555;
+            text-align: right;
         }
 
         .form-input {
@@ -931,6 +938,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             font-size: 1rem;
             transition: var(--transition);
             background: #f8f9fa;
+            text-align: right;
         }
 
         .form-input:focus {
@@ -949,6 +957,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             transition: var(--transition);
             background: #f8f9fa;
             cursor: pointer;
+            text-align: right;
         }
 
         .form-select:focus {
@@ -1206,6 +1215,10 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
             }
+           
+            .info-item-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1238,23 +1251,25 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                 padding: 20px;
             }
            
-            .teacher-card {
+            .teacher-profile-card {
                 flex-direction: column;
                 text-align: center;
             }
            
-            .badge-container {
+            .teacher-basic-info {
+                text-align: center;
+            }
+           
+            .teacher-name {
                 justify-content: center;
             }
            
-            .action-buttons {
-                flex-direction: column;
-                width: 100%;
+            .contact-item {
+                justify-content: center;
             }
            
             .btn-action {
-                width: 100%;
-                justify-content: center;
+                min-width: 100%;
             }
            
             .modal-content {
@@ -1265,39 +1280,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             .form-grid {
                 grid-template-columns: 1fr;
             }
-        }
-
-        /* Loading Skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        /* Hover Effects */
-        .hover-lift {
-            transition: var(--transition);
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Gradient Text */
-        .gradient-text {
-            background: var(--gradient-success);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
     </style>
 </head>
@@ -1411,7 +1393,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             <div class="table-header">
                 <h2>
                     <i class="fas fa-list-alt"></i>
-                    قائمة المعلمين التفصيلية
+                    قائمة المعلمين
                 </h2>
                 <div class="table-count">
                     <i class="fas fa-user-check me-2"></i>
@@ -1424,43 +1406,47 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                     <table class="teachers-table">
                         <thead>
                             <tr>
-                                <th>المعلومات الأساسية</th>
-                                <th>المؤهلات</th>
-                                <th>المعلومات الوظيفية</th>
-                                <th>التاريخ والمدة</th>
-                                <th>الصفوف المشرفة</th>
-                                <th>الحالة</th>
-                                <th>العمليات</th>
+                                <th width="25%">الملف الشخصي</th>
+                                <th width="20%">المعلومات الأكاديمية</th>
+                                <th width="20%">المعلومات الوظيفية</th>
+                                <th width="15%">الصفوف المشرفة</th>
+                                <th width="10%">الحالة</th>
+                                <th width="10%">العمليات</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($teachers_with_classes as $teacher): ?>
                                 <?php
+                                // تنظيف البيانات
                                 $full_name = !empty($teacher['full_name']) ? htmlspecialchars($teacher['full_name']) : 'غير محدد';
                                 $email = !empty($teacher['email']) ? htmlspecialchars($teacher['email']) : 'غير محدد';
+                                $phone = !empty($teacher['phone']) ? htmlspecialchars($teacher['phone']) : 'غير محدد';
                                 $teacher_code = !empty($teacher['teacher_code']) ? htmlspecialchars($teacher['teacher_code']) : 'غير محدد';
+                                $national_id = !empty($teacher['national_id']) ? htmlspecialchars($teacher['national_id']) : 'غير محدد';
+                                $birth_date = !empty($teacher['birth_date']) ? date('d/m/Y', strtotime($teacher['birth_date'])) : 'غير محدد';
                                 $qualification = !empty($teacher['qualification']) ? htmlspecialchars($teacher['qualification']) : 'غير محدد';
                                 $specialization = !empty($teacher['specialization']) ? htmlspecialchars($teacher['specialization']) : 'غير محدد';
                                 $employment_type = !empty($teacher['employment_type']) ? htmlspecialchars($teacher['employment_type']) : 'غير محدد';
                                 $salary = !empty($teacher['salary']) ? number_format($teacher['salary'], 0) . ' ر.س' : 'غير محدد';
-                                $experience = !empty($teacher['experience_years']) ? $teacher['experience_years'] . ' سنوات' : '0 سنوات';
+                                $experience_years = !empty($teacher['experience_years']) ? $teacher['experience_years'] . ' سنوات' : '0 سنوات';
+                                $hire_date = !empty($teacher['hire_date']) ? date('d/m/Y', strtotime($teacher['hire_date'])) : 'غير محدد';
                                 $teaching_classes = $teacher['teaching_classes'] ?? [];
                                
                                 // حساب العمر
                                 $age = 'غير محدد';
                                 if (!empty($teacher['birth_date'])) {
-                                    $birth_date = new DateTime($teacher['birth_date']);
+                                    $birth_date_obj = new DateTime($teacher['birth_date']);
                                     $today = new DateTime();
-                                    $age_interval = $today->diff($birth_date);
+                                    $age_interval = $today->diff($birth_date_obj);
                                     $age = $age_interval->y . ' سنة';
                                 }
                                
                                 // حساب مدة العمل
                                 $work_duration = 'غير محدد';
                                 if (!empty($teacher['hire_date'])) {
-                                    $hire_date = new DateTime($teacher['hire_date']);
+                                    $hire_date_obj = new DateTime($teacher['hire_date']);
                                     $today = new DateTime();
-                                    $interval = $today->diff($hire_date);
+                                    $interval = $today->diff($hire_date_obj);
                                     if ($interval->y > 0) {
                                         $work_duration = $interval->y . ' سنوات';
                                     } elseif ($interval->m > 0) {
@@ -1471,166 +1457,158 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                 }
                                 ?>
                             
-                                <tr class="hover-lift">
-                                    <!-- المعلومات الأساسية -->
+                                <tr>
+                                    <!-- الملف الشخصي -->
                                     <td>
-                                        <div class="teacher-card">
+                                        <div class="teacher-profile-card">
                                             <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($full_name); ?>&background=00b09b&color=fff&size=128&font-size=0.5&bold=true"
                                                  alt="صورة المعلم"
                                                  class="teacher-avatar">
-                                            <div class="teacher-info-content">
+                                            <div class="teacher-basic-info">
                                                 <div class="teacher-name">
                                                     <?php echo $full_name; ?>
-                                                    <span class="teacher-id">
+                                                    <span class="teacher-code">
                                                         <i class="fas fa-hashtag"></i> <?php echo $teacher['id']; ?>
                                                     </span>
                                                 </div>
-                                                <div class="teacher-email">
-                                                    <i class="fas fa-envelope"></i>
-                                                    <?php echo $email; ?>
-                                                </div>
-                                                <?php if (!empty($teacher['phone'])): ?>
-                                                <div class="mb-2">
-                                                    <span class="badge badge-light">
+                                                <div class="teacher-contact">
+                                                    <div class="contact-item">
+                                                        <i class="fas fa-envelope"></i>
+                                                        <span><?php echo $email; ?></span>
+                                                    </div>
+                                                    <?php if (!empty($phone)): ?>
+                                                    <div class="contact-item">
                                                         <i class="fas fa-phone"></i>
-                                                        <?php echo htmlspecialchars($teacher['phone']); ?>
-                                                    </span>
-                                                </div>
-                                                <?php endif; ?>
-                                                <div>
-                                                    <span class="badge badge-purple">
-                                                        <i class="fas fa-barcode"></i>
-                                                        <?php echo $teacher_code; ?>
-                                                    </span>
+                                                        <span><?php echo $phone; ?></span>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    <div class="contact-item">
+                                                        <i class="fas fa-id-card"></i>
+                                                        <span><?php echo $national_id; ?></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
                                 
-                                    <!-- المؤهلات -->
+                                    <!-- المعلومات الأكاديمية -->
                                     <td>
-                                        <div class="badge-container">
-                                            <span class="badge badge-success mb-2">
-                                                <i class="fas fa-book"></i>
-                                                <?php echo $specialization; ?>
-                                            </span>
-                                            <span class="badge badge-primary mb-2">
-                                                <i class="fas fa-graduation-cap"></i>
-                                                <?php echo $qualification; ?>
-                                            </span>
-                                            <span class="badge badge-warning mb-2">
-                                                <i class="fas fa-star"></i>
-                                                <?php echo $experience; ?>
-                                            </span>
-                                            <span class="badge badge-info">
-                                                <i class="fas fa-birthday-cake"></i>
-                                                <?php echo $age; ?>
-                                            </span>
+                                        <div class="info-card">
+                                            <div class="info-card-header">
+                                                <div class="info-card-icon">
+                                                    <i class="fas fa-graduation-cap"></i>
+                                                </div>
+                                                <div class="info-card-title">المعلومات الأكاديمية</div>
+                                            </div>
+                                            <div class="info-item-grid">
+                                                <div class="info-item">
+                                                    <span class="info-label">الكود:</span>
+                                                    <span class="info-value highlight"><?php echo $teacher_code; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">المؤهل:</span>
+                                                    <span class="info-value success"><?php echo $qualification; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">التخصص:</span>
+                                                    <span class="info-value highlight"><?php echo $specialization; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">الخبرة:</span>
+                                                    <span class="info-value warning"><?php echo $experience_years; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">الميلاد:</span>
+                                                    <span class="info-value"><?php echo $birth_date; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">العمر:</span>
+                                                    <span class="info-value success"><?php echo $age; ?></span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <?php if (!empty($teacher['national_id'])): ?>
-                                        <div class="mt-2">
-                                            <span class="badge badge-light">
-                                                <i class="fas fa-id-card"></i>
-                                                <?php echo htmlspecialchars($teacher['national_id']); ?>
-                                            </span>
-                                        </div>
-                                        <?php endif; ?>
                                     </td>
                                 
                                     <!-- المعلومات الوظيفية -->
                                     <td>
-                                        <div class="badge-container">
-                                            <span class="badge badge-success mb-2">
-                                                <i class="fas fa-money-bill-wave"></i>
-                                                <?php echo $salary; ?>
-                                            </span>
-                                            <span class="badge badge-primary mb-2">
-                                                <i class="fas fa-briefcase"></i>
-                                                <?php echo $employment_type; ?>
-                                            </span>
-                                            <?php if (!empty($teacher['bank_name'])): ?>
-                                            <span class="badge badge-info mb-2">
-                                                <i class="fas fa-university"></i>
-                                                <?php echo htmlspecialchars($teacher['bank_name']); ?>
-                                            </span>
-                                            <?php endif; ?>
-                                            <?php if (!empty($teacher['office_number'])): ?>
-                                            <span class="badge badge-warning">
-                                                <i class="fas fa-door-closed"></i>
-                                                مكتب <?php echo htmlspecialchars($teacher['office_number']); ?>
-                                            </span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
-                                
-                                    <!-- التاريخ والمدة -->
-                                    <td>
-                                        <div class="badge-container">
-                                            <span class="badge badge-success mb-2">
-                                                <i class="fas fa-calendar-alt"></i>
-                                                <?php echo !empty($teacher['hire_date']) ? date('d/m/Y', strtotime($teacher['hire_date'])) : 'غير محدد'; ?>
-                                            </span>
-                                            <span class="badge badge-primary mb-2">
-                                                <i class="fas fa-clock"></i>
-                                                <?php echo $work_duration; ?>
-                                            </span>
-                                            <?php if (!empty($teacher['created_at'])): ?>
-                                            <span class="badge badge-info">
-                                                <i class="fas fa-user-plus"></i>
-                                                <?php echo date('d/m/Y', strtotime($teacher['created_at'])); ?>
-                                            </span>
-                                            <?php endif; ?>
+                                        <div class="info-card">
+                                            <div class="info-card-header">
+                                                <div class="info-card-icon">
+                                                    <i class="fas fa-briefcase"></i>
+                                                </div>
+                                                <div class="info-card-title">المعلومات الوظيفية</div>
+                                            </div>
+                                            <div class="info-item-grid">
+                                                <div class="info-item">
+                                                    <span class="info-label">تاريخ التعيين:</span>
+                                                    <span class="info-value success"><?php echo $hire_date; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">مدة العمل:</span>
+                                                    <span class="info-value highlight"><?php echo $work_duration; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">نوع التوظيف:</span>
+                                                    <span class="info-value success"><?php echo $employment_type; ?></span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="info-label">الراتب:</span>
+                                                    <span class="info-value highlight"><?php echo $salary; ?></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                 
                                     <!-- الصفوف المشرفة -->
                                     <td>
-                                        <div class="class-badges">
+                                        <div class="class-badges-container">
                                             <?php if (!empty($teaching_classes)): ?>
                                                 <?php foreach ($teaching_classes as $class): ?>
-                                                    <span class="class-badge">
+                                                    <div class="class-badge">
                                                         <i class="fas fa-chalkboard-teacher"></i>
                                                         <?php echo htmlspecialchars($class); ?>
-                                                    </span>
+                                                    </div>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
-                                                <span class="class-badge empty">
+                                                <div class="no-classes">
                                                     <i class="fas fa-times-circle"></i>
                                                     لا يوجد صفوف حالياً
-                                                </span>
+                                                </div>
                                             <?php endif; ?>
                                         </div>
                                     </td>
                                 
                                     <!-- الحالة -->
                                     <td>
-                                        <?php if (!empty($teacher['user_status'])): ?>
-                                            <?php if ($teacher['user_status'] == 'active'): ?>
-                                                <span class="status-badge status-active">
-                                                    <i class="fas fa-check-circle"></i>
-                                                    نشط
-                                                </span>
-                                            <?php elseif ($teacher['user_status'] == 'inactive'): ?>
-                                                <span class="status-badge status-inactive">
-                                                    <i class="fas fa-times-circle"></i>
-                                                    غير نشط
-                                                </span>
+                                        <div class="status-container">
+                                            <?php if (!empty($teacher['user_status'])): ?>
+                                                <?php if ($teacher['user_status'] == 'active'): ?>
+                                                    <span class="status-badge status-active">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        نشط
+                                                    </span>
+                                                <?php elseif ($teacher['user_status'] == 'inactive'): ?>
+                                                    <span class="status-badge status-inactive">
+                                                        <i class="fas fa-times-circle"></i>
+                                                        غير نشط
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="status-badge status-suspended">
+                                                        <i class="fas fa-ban"></i>
+                                                        موقوف
+                                                    </span>
+                                                <?php endif; ?>
                                             <?php else: ?>
-                                                <span class="status-badge status-suspended">
-                                                    <i class="fas fa-ban"></i>
-                                                    موقوف
+                                                <span class="status-badge status-inactive">
+                                                    غير محدد
                                                 </span>
                                             <?php endif; ?>
-                                        <?php else: ?>
-                                            <span class="badge badge-light">
-                                                غير محدد
-                                            </span>
-                                        <?php endif; ?>
+                                        </div>
                                     </td>
                                 
                                     <!-- العمليات -->
                                     <td>
-                                        <div class="action-buttons">
+                                        <div class="action-container">
                                             <button class="btn-action btn-edit" 
                                                     onclick="openEditModal(<?php echo htmlspecialchars(json_encode($teacher)); ?>)">
                                                 <i class="fas fa-edit"></i>
@@ -1678,12 +1656,12 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="full_name">الاسم الكامل</label>
+                        <label class="form-label" for="full_name">الاسم الكامل *</label>
                         <input type="text" class="form-input" id="full_name" name="full_name" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="email">البريد الإلكتروني</label>
+                        <label class="form-label" for="email">البريد الإلكتروني *</label>
                         <input type="email" class="form-input" id="email" name="email" required>
                     </div>
                     
@@ -1708,7 +1686,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="specialization">التخصص</label>
+                        <label class="form-label" for="specialization">التخصص *</label>
                         <input type="text" class="form-input" id="specialization" name="specialization" required>
                     </div>
                     
@@ -1718,7 +1696,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="employment_type">نوع التوظيف</label>
+                        <label class="form-label" for="employment_type">نوع التوظيف *</label>
                         <select class="form-select" id="employment_type" name="employment_type" required>
                             <option value="دائم">دائم</option>
                             <option value="متعاقد">متعاقد</option>
@@ -1738,27 +1716,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="bank_name">اسم البنك</label>
-                        <input type="text" class="form-input" id="bank_name" name="bank_name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="bank_account">رقم الحساب البنكي</label>
-                        <input type="text" class="form-input" id="bank_account" name="bank_account">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="office_number">رقم المكتب</label>
-                        <input type="text" class="form-input" id="office_number" name="office_number">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="office_hours">ساعات المكتب</label>
-                        <input type="text" class="form-input" id="office_hours" name="office_hours" placeholder="مثال: 8:00 ص - 3:00 م">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="user_status">حالة المستخدم</label>
+                        <label class="form-label" for="user_status">حالة المستخدم *</label>
                         <select class="form-select" id="user_status" name="user_status" required>
                             <option value="active">نشط</option>
                             <option value="inactive">غير نشط</option>
@@ -1813,10 +1771,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             document.getElementById('employment_type').value = teacherData.employment_type || 'دائم';
             document.getElementById('salary').value = teacherData.salary || '';
             document.getElementById('experience_years').value = teacherData.experience_years || '';
-            document.getElementById('bank_name').value = teacherData.bank_name || '';
-            document.getElementById('bank_account').value = teacherData.bank_account || '';
-            document.getElementById('office_number').value = teacherData.office_number || '';
-            document.getElementById('office_hours').value = teacherData.office_hours || '';
             document.getElementById('user_status').value = teacherData.user_status || 'active';
             
             document.getElementById('editModal').style.display = 'block';
@@ -1915,39 +1869,10 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             }
         });
 
-        // ============ تأثيرات Hover الإضافية ============
-        document.querySelectorAll('.badge, .class-badge, .status-badge, .btn-action').forEach(element => {
-            element.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-3px)';
-            });
-           
-            element.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-
-        // ============ تأثير النقر على البطاقات ============
-        document.querySelectorAll('.teacher-card').forEach(card => {
-            card.style.cursor = 'pointer';
-            card.addEventListener('click', function() {
-                this.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 200);
-            });
-        });
-
         // ============ Auto-focus على حقل البحث ============
         setTimeout(() => {
             document.querySelector('.search-input').focus();
         }, 500);
-
-        // ============ تحميل سلسل للصور ============
-        document.querySelectorAll('.teacher-avatar').forEach(img => {
-            img.addEventListener('load', function() {
-                this.style.animation = 'fadeIn 0.5s ease';
-            });
-        });
 
         // ============ تأثيرات التمرير ============
         const tableRows = document.querySelectorAll('.teachers-table tbody tr');
@@ -1987,11 +1912,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                     opacity: 1;
                     transform: translateX(0);
                 }
-            }
-           
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
             }
         `;
         document.head.appendChild(style);
