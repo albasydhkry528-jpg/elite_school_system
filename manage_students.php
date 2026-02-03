@@ -9,6 +9,130 @@ if (!has_permission('admin')) {
     exit();
 }
 
+// ============ معالجة حذف الطالب ============
+if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
+    $student_id = clean_input($_GET['delete_id']);
+    
+    // الحصول على user_id للطالب أولاً
+    $sql = "SELECT user_id FROM students WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $user_id = $row['user_id'];
+        
+        // بدء المعاملة
+        $conn->begin_transaction();
+        
+        try {
+            // حذف الطالب من جدول students
+            $sql1 = "DELETE FROM students WHERE id = ?";
+            $stmt1 = $conn->prepare($sql1);
+            $stmt1->bind_param("i", $student_id);
+            $stmt1->execute();
+            
+            // حذف المستخدم من جدول users
+            $sql2 = "DELETE FROM users WHERE id = ?";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bind_param("i", $user_id);
+            $stmt2->execute();
+            
+            // تأكيد المعاملة
+            $conn->commit();
+            
+            $_SESSION['success_msg'] = "تم حذف الطالب بنجاح!";
+            
+        } catch (Exception $e) {
+            // التراجع عن المعاملة في حالة الخطأ
+            $conn->rollback();
+            $_SESSION['error_msg'] = "حدث خطأ أثناء حذف الطالب: " . $e->getMessage();
+        }
+    } else {
+        $_SESSION['error_msg'] = "الطالب غير موجود!";
+    }
+    
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+// ============ معالجة تحديث الطالب ============
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_student'])) {
+    $student_id = clean_input($_POST['student_id']);
+    $full_name = clean_input($_POST['full_name']);
+    $email = clean_input($_POST['email']);
+    $phone = clean_input($_POST['phone']);
+    $national_id = clean_input($_POST['national_id']);
+    $birth_date = clean_input($_POST['birth_date']);
+    $gender = clean_input($_POST['gender']);
+    $nationality = clean_input($_POST['nationality']);
+    $enrollment_date = clean_input($_POST['enrollment_date']);
+    $class_id = !empty($_POST['class_id']) ? clean_input($_POST['class_id']) : NULL;
+    $section = !empty($_POST['section']) ? clean_input($_POST['section']) : NULL;
+    $user_status = clean_input($_POST['user_status']);
+    
+    // الحصول على user_id للطالب
+    $sql = "SELECT user_id FROM students WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $user_id = $row['user_id'];
+        
+        // بدء المعاملة
+        $conn->begin_transaction();
+        
+        try {
+            // تحديث جدول users
+            $sql1 = "UPDATE users SET 
+                    full_name = ?, 
+                    email = ?, 
+                    phone = ?, 
+                    status = ? 
+                    WHERE id = ?";
+            $stmt1 = $conn->prepare($sql1);
+            $stmt1->bind_param("ssssi", $full_name, $email, $phone, $user_status, $user_id);
+            $stmt1->execute();
+            
+            // تحديث جدول students
+            $sql2 = "UPDATE students SET 
+                    national_id = ?, 
+                    birth_date = ?, 
+                    gender = ?, 
+                    nationality = ?, 
+                    enrollment_date = ?, 
+                    class_id = ?, 
+                    section = ? 
+                    WHERE id = ?";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bind_param("sssssssi", 
+                $national_id, $birth_date, $gender, $nationality, 
+                $enrollment_date, $class_id, $section, $student_id);
+            $stmt2->execute();
+            
+            // تأكيد المعاملة
+            $conn->commit();
+            
+            $_SESSION['success_msg'] = "تم تحديث بيانات الطالب بنجاح!";
+            
+        } catch (Exception $e) {
+            // التراجع عن المعاملة في حالة الخطأ
+            $conn->rollback();
+            $_SESSION['error_msg'] = "حدث خطأ أثناء تحديث بيانات الطالب: " . $e->getMessage();
+        }
+    } else {
+        $_SESSION['error_msg'] = "الطالب غير موجود!";
+    }
+    
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
 // ============ البحث عن الطلاب ============
 $search = '';
 $where_clause = '';
@@ -38,15 +162,15 @@ $sql = "SELECT
             u.email,
             u.phone,
             u.status as user_status,
+            s.user_id,
+            s.created_at,
             c.class_name,
             c.grade,
-            c.section as class_section,
             al.level_name,
-            al.level_code,
             p.parent_code,
             pu.full_name as parent_name
         FROM students s
-        LEFT JOIN users u ON s.user_id = u.id
+        INNER JOIN users u ON s.user_id = u.id
         LEFT JOIN classes c ON s.class_id = c.id
         LEFT JOIN academic_levels al ON c.level_id = al.id
         LEFT JOIN parents p ON s.parent_id = p.id
@@ -63,16 +187,16 @@ if (!empty($params)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// ============ جلب جميع الصفوف لاستخدامها في قائمة التعيين ============
+// ============ جلب جميع الصفوف لاستخدامها في قائمة التعديل ============
 $classes_sql = "SELECT c.id, c.class_name, c.grade, al.level_name
                 FROM classes c
                 LEFT JOIN academic_levels al ON c.level_id = al.id
                 WHERE c.is_active = 1
                 ORDER BY al.sort_order, c.class_name";
 $classes_result = $conn->query($classes_sql);
-$classes = [];
+$all_classes = [];
 while ($row = $classes_result->fetch_assoc()) {
-    $classes[$row['id']] = $row;
+    $all_classes[] = $row;
 }
 
 // ============ رسائل النجاح/الخطأ ============
@@ -456,6 +580,47 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             color: #856404;
         }
      
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+     
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+     
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+     
+        .btn-edit {
+            background: var(--gradient-primary);
+        }
+     
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4090 100%);
+        }
+     
+        .btn-delete {
+            background: var(--gradient-warning);
+        }
+     
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #e76c7c 0%, #e8a798 100%);
+        }
+     
         /* Messages */
         .message {
             padding: 20px;
@@ -466,6 +631,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             align-items: center;
             gap: 15px;
             width: 100%;
+            position: relative;
         }
      
         .message-success {
@@ -478,6 +644,24 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
             color: #721c24;
             border: 2px solid #f5c6cb;
+        }
+     
+        .message-close {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+     
+        .message-close:hover {
+            opacity: 1;
         }
      
         /* Empty State */
@@ -497,49 +681,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             font-size: 1.5rem;
             margin-bottom: 10px;
             color: #888;
-        }
-     
-        /* Class Assignment Button */
-        .assign-class-btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 5px;
-        }
-     
-        .assign-class-btn:hover {
-            background: linear-gradient(135deg, #3a9ce8 0%, #00d9e8 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-     
-        .change-class-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            margin-top: 3px;
-        }
-     
-        .change-class-btn:hover {
-            background: linear-gradient(135deg, #e082ec 0%, #e4465c 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
      
         /* Modal Styles */
@@ -562,6 +703,8 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             padding: 25px;
             width: 500px;
             max-width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: var(--shadow-dark);
             animation: modalSlideIn 0.3s ease;
         }
@@ -583,6 +726,9 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
         .modal-header h3 {
             color: var(--primary-color);
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
      
         .modal-close {
@@ -644,10 +790,14 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             cursor: pointer;
             font-weight: 600;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
      
         .btn-primary:hover {
             background: #3a56d4;
+            transform: translateY(-2px);
         }
      
         .btn-secondary {
@@ -663,6 +813,50 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
      
         .btn-secondary:hover {
             background: #5a6268;
+            transform: translateY(-2px);
+        }
+     
+        /* Delete Confirmation Modal */
+        .delete-modal {
+            text-align: center;
+        }
+     
+        .delete-icon {
+            font-size: 4rem;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+     
+        .delete-text {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+     
+        .delete-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+     
+        .btn-confirm-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+     
+        .btn-confirm-delete:hover {
+            background: #c82333;
+            transform: translateY(-2px);
         }
      
         /* Responsive Design */
@@ -706,6 +900,15 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                 padding: 20px;
             }
          
+            .action-buttons {
+                flex-direction: column;
+            }
+         
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+         
             .modal-content {
                 padding: 20px;
                 width: 95%;
@@ -732,10 +935,6 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                     <button class="header-btn" onclick="window.location.href='users.php'">
                         <i class="fas fa-home"></i>
                         لوحة التحكم
-                    </button>
-                    <button class="header-btn" onclick="fixAllClasses()">
-                        <i class="fas fa-tools"></i>
-                        إصلاح التلقائي
                     </button>
                 </div>
             </div>
@@ -769,23 +968,29 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
 
         <!-- Messages -->
         <?php if (!empty($success_msg)): ?>
-            <div class="message message-success">
+            <div class="message message-success" id="successMessage">
                 <i class="fas fa-check-circle"></i>
                 <?php echo $success_msg; ?>
+                <button class="message-close" onclick="closeMessage('successMessage')">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         <?php endif; ?>
      
         <?php if (!empty($error_msg)): ?>
-            <div class="message message-error">
+            <div class="message message-error" id="errorMessage">
                 <i class="fas fa-exclamation-circle"></i>
                 <?php echo $error_msg; ?>
+                <button class="message-close" onclick="closeMessage('errorMessage')">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         <?php endif; ?>
 
         <!-- Search Section -->
         <div class="search-section">
             <div class="search-container">
-                <form method="GET" action="manage_students.php" id="searchForm">
+                <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="searchForm">
                     <input type="text"
                            name="search"
                            class="search-input"
@@ -823,6 +1028,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                 <th>الجنسية</th>
                                 <th>تاريخ التسجيل</th>
                                 <th>الحالة</th>
+                                <th>العمليات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -848,22 +1054,24 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                 $gender_display = !empty($student['gender']) ? ($student['gender'] == 'ذكر' ? '👦 ذكر' : '👧 أنثى') : 'غير محدد';
                                 $nationality = !empty($student['nationality']) ? htmlspecialchars($student['nationality']) : 'غير محدد';
                              
-                                // تحديد عرض الصف الدراسي
-                                $has_class = !empty($student['class_id']) && !empty($student['class_name']);
+                                // تحديد عرض الصف الدراسي - حل المشكلة هنا
+                                $has_class = !empty($student['class_id']);
                                 $class_display = 'غير محدد';
                                
                                 if ($has_class) {
-                                    // استخدام level_name إذا متاح، وإلا grade
-                                    if (!empty($student['level_name'])) {
-                                        $class_display = htmlspecialchars($student['level_name'] . ' - ' . $student['class_name']);
-                                    } elseif (!empty($student['grade'])) {
-                                        $class_display = htmlspecialchars($student['grade'] . ' - ' . $student['class_name']);
+                                    if (!empty($student['class_name'])) {
+                                        // استخدام level_name إذا متاح، وإلا grade
+                                        if (!empty($student['level_name'])) {
+                                            $class_display = htmlspecialchars($student['level_name'] . ' - ' . $student['class_name']);
+                                        } elseif (!empty($student['grade'])) {
+                                            $class_display = htmlspecialchars($student['grade'] . ' - ' . $student['class_name']);
+                                        } else {
+                                            $class_display = htmlspecialchars($student['class_name']);
+                                        }
                                     } else {
-                                        $class_display = htmlspecialchars($student['class_name']);
+                                        // إذا كان class_id موجوداً ولكن class_name غير موجود (ربط خطأ)
+                                        $class_display = 'صف غير موجود (كود: ' . htmlspecialchars($student['class_id']) . ')';
                                     }
-                                } elseif (!empty($student['class_id']) && empty($student['class_name'])) {
-                                    // إذا كان class_id موجوداً ولكن class_name غير موجود (خطأ في الربط)
-                                    $class_display = 'خطأ في الربط (كود الصف: ' . htmlspecialchars($student['class_id']) . ')';
                                 }
                                 ?>
                              
@@ -916,19 +1124,11 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                                     قسم: <?php echo htmlspecialchars($student['section']); ?>
                                                 </span>
                                             <?php endif; ?>
-                                            <br>
-                                            <button class="change-class-btn" onclick="openClassModal(<?php echo $student['id']; ?>, <?php echo $student['class_id']; ?>)">
-                                                <i class="fas fa-exchange-alt"></i> تغيير الصف
-                                            </button>
                                         <?php else: ?>
                                             <span class="text-muted" style="color: #888;">
                                                 <i class="fas fa-exclamation-circle" style="margin-left: 5px;"></i>
                                                 <?php echo $class_display; ?>
                                             </span>
-                                            <br>
-                                            <button class="assign-class-btn" onclick="openClassModal(<?php echo $student['id']; ?>, null)">
-                                                <i class="fas fa-plus-circle"></i> تعيين صف
-                                            </button>
                                         <?php endif; ?>
                                     </td>
                                  
@@ -970,6 +1170,22 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                             <span class="text-muted">غير محدد</span>
                                         <?php endif; ?>
                                     </td>
+                                
+                                    <!-- العمليات -->
+                                    <td data-label="العمليات">
+                                        <div class="action-buttons">
+                                            <button class="btn-action btn-edit" 
+                                                    onclick="openEditModal(<?php echo htmlspecialchars(json_encode($student)); ?>)">
+                                                <i class="fas fa-edit"></i>
+                                                تعديل
+                                            </button>
+                                            <button class="btn-action btn-delete" 
+                                                    onclick="confirmDelete(<?php echo $student['id']; ?>, '<?php echo addslashes($full_name); ?>')">
+                                                <i class="fas fa-trash"></i>
+                                                حذف
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
@@ -985,27 +1201,66 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
         </div>
     </div>
 
-    <!-- Modal لتحديد الصف -->
-    <div id="classModal" class="modal-overlay">
+    <!-- Edit Student Modal -->
+    <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-graduation-cap"></i> تعيين الصف الدراسي</h3>
-                <button class="modal-close" onclick="closeClassModal()">&times;</button>
+                <h3><i class="fas fa-edit"></i> تعديل بيانات الطالب</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="modalStudentId">
-               
-                <div class="form-group">
-                    <label><i class="fas fa-user-graduate"></i> اسم الطالب:</label>
-                    <input type="text" id="modalStudentName" readonly>
-                </div>
-               
-                <div class="form-group">
-                    <label><i class="fas fa-chalkboard-teacher"></i> اختر الصف الدراسي:</label>
-                    <select id="modalClassId">
-                        <option value="">-- اختر صف دراسي --</option>
-                        <?php foreach ($classes as $class): ?>
-                            <option value="<?php echo $class['id']; ?>">
+            <form id="editStudentForm" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <input type="hidden" name="student_id" id="student_id">
+                <input type="hidden" name="update_student" value="1">
+                
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> الاسم الكامل:</label>
+                        <input type="text" class="form-input" id="full_name" name="full_name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> البريد الإلكتروني:</label>
+                        <input type="email" class="form-input" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> رقم الهاتف:</label>
+                        <input type="tel" class="form-input" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> رقم الهوية الوطنية:</label>
+                        <input type="text" class="form-input" id="national_id" name="national_id">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-birthday-cake"></i> تاريخ الميلاد:</label>
+                        <input type="date" class="form-input" id="birth_date" name="birth_date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> الجنس:</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-flag"></i> الجنسية:</label>
+                        <input type="text" class="form-input" id="nationality" name="nationality">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> تاريخ التسجيل:</label>
+                        <input type="date" class="form-input" id="enrollment_date" name="enrollment_date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-graduation-cap"></i> الصف الدراسي:</label>
+                        <select class="form-select" id="class_id" name="class_id">
+                            <option value="">-- اختر صف دراسي --</option>
+                            <?php foreach ($all_classes as $class): ?>
                                 <?php
                                 $display_name = '';
                                 if (!empty($class['level_name'])) {
@@ -1015,26 +1270,121 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                 } else {
                                     $display_name = $class['class_name'];
                                 }
-                                echo htmlspecialchars($display_name);
                                 ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                                <option value="<?php echo $class['id']; ?>">
+                                    <?php echo htmlspecialchars($display_name); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-bookmark"></i> القسم (اختياري):</label>
+                        <input type="text" class="form-input" id="section" name="section" placeholder="مثال: أ، ب، ج...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-user-check"></i> حالة المستخدم:</label>
+                        <select class="form-select" id="user_status" name="user_status" required>
+                            <option value="active">نشط</option>
+                            <option value="inactive">غير نشط</option>
+                            <option value="suspended">موقوف</option>
+                        </select>
+                    </div>
                 </div>
-               
-                <div class="form-group">
-                    <label><i class="fas fa-bookmark"></i> القسم (اختياري):</label>
-                    <input type="text" id="modalSection" placeholder="مثال: أ، ب، ج...">
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeEditModal()">إلغاء</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> حفظ التغييرات
+                    </button>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content delete-modal">
+            <div class="delete-icon">
+                <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeClassModal()">إلغاء</button>
-                <button class="btn-primary" onclick="assignClass()">حفظ التغييرات</button>
+            <h3 class="delete-text" id="deleteMessage">هل أنت متأكد من حذف هذا الطالب؟</h3>
+            <div class="delete-actions">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">إلغاء</button>
+                <button type="button" class="btn-confirm-delete" onclick="performDelete()">
+                    <i class="fas fa-trash"></i> نعم، احذف
+                </button>
             </div>
         </div>
     </div>
 
     <script>
+        // ============ متغيرات عامة ============
+        let currentStudentId = null;
+
+        // ============ فتح نافذة التعديل ============
+        function openEditModal(studentData) {
+            document.getElementById('student_id').value = studentData.id;
+            document.getElementById('full_name').value = studentData.full_name || '';
+            document.getElementById('email').value = studentData.email || '';
+            document.getElementById('phone').value = studentData.phone || '';
+            document.getElementById('national_id').value = studentData.national_id || '';
+            document.getElementById('birth_date').value = studentData.birth_date || '';
+            document.getElementById('gender').value = studentData.gender || 'ذكر';
+            document.getElementById('nationality').value = studentData.nationality || '';
+            document.getElementById('enrollment_date').value = studentData.enrollment_date || '';
+            document.getElementById('class_id').value = studentData.class_id || '';
+            document.getElementById('section').value = studentData.section || '';
+            document.getElementById('user_status').value = studentData.user_status || 'active';
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        // ============ إغلاق نافذة التعديل ============
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // ============ تأكيد الحذف ============
+        function confirmDelete(studentId, studentName) {
+            currentStudentId = studentId;
+            document.getElementById('deleteMessage').innerHTML = 
+                `هل أنت متأكد من حذف الطالب <strong>${studentName}</strong>؟<br>هذا الإجراء لا يمكن التراجع عنه.`;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        // ============ إغلاق نافذة الحذف ============
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            currentStudentId = null;
+        }
+
+        // ============ تنفيذ الحذف ============
+        function performDelete() {
+            if (currentStudentId) {
+                window.location.href = `<?php echo $_SERVER['PHP_SELF']; ?>?delete_id=${currentStudentId}`;
+            }
+        }
+
+        // ============ إغلاق رسائل النجاح/الخطأ ============
+        function closeMessage(messageId) {
+            document.getElementById(messageId).style.display = 'none';
+        }
+
+        // ============ إغلاق رسائل النجاح/الخطأ تلقائياً بعد 5 ثوانٍ ============
+        setTimeout(function() {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (successMsg) {
+                successMsg.style.display = 'none';
+            }
+            if (errorMsg) {
+                errorMsg.style.display = 'none';
+            }
+        }, 5000);
+
         // ============ البحث الفوري ============
         document.querySelector('.search-input').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
@@ -1051,92 +1401,28 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             if (e.key === 'Enter') {
                 const searchValue = this.value.trim();
                 if (searchValue !== '') {
-                    window.location.href = 'manage_students.php?search=' + encodeURIComponent(searchValue);
+                    window.location.href = '<?php echo $_SERVER['PHP_SELF']; ?>?search=' + encodeURIComponent(searchValue);
                 } else {
-                    window.location.href = 'manage_students.php';
+                    window.location.href = '<?php echo $_SERVER['PHP_SELF']; ?>';
                 }
             }
         });
 
-        // ============ Modal Functions ============
-        function openClassModal(studentId, currentClassId) {
-            const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
-            const studentName = row.getAttribute('data-student-name');
-           
-            document.getElementById('modalStudentId').value = studentId;
-            document.getElementById('modalStudentName').value = studentName;
-            document.getElementById('modalClassId').value = currentClassId || '';
-            document.getElementById('modalSection').value = '';
-           
-            document.getElementById('classModal').style.display = 'flex';
-        }
-       
-        function closeClassModal() {
-            document.getElementById('classModal').style.display = 'none';
-        }
-       
-        function assignClass() {
-            const studentId = document.getElementById('modalStudentId').value;
-            const classId = document.getElementById('modalClassId').value;
-            const section = document.getElementById('modalSection').value;
-           
-            if (!classId) {
-                alert('يرجى اختيار صف دراسي');
-                return;
-            }
-           
-            // إرسال البيانات عبر AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'assign_class.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-           
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        alert('تم تعيين الصف الدراسي بنجاح');
-                        location.reload();
-                    } else {
-                        alert('حدث خطأ: ' + response.message);
-                    }
+        // ============ إغلاق Modals عند النقر خارجها ============
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    if (this.id === 'editModal') closeEditModal();
+                    if (this.id === 'deleteModal') closeDeleteModal();
                 }
-            };
-           
-            const data = `student_id=${studentId}&class_id=${classId}&section=${section}`;
-            xhr.send(data);
-        }
-       
-        function fixAllClasses() {
-            if (confirm('هل تريد تشغيل الإصلاح التلقائي للصفوف؟ هذا سيحدد صفوفاً للطلاب الذين ليس لديهم صف.')) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', 'auto_assign_classes.php', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-               
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        const response = JSON.parse(xhr.responseText);
-                        alert(response.message);
-                        if (response.success) {
-                            location.reload();
-                        }
-                    }
-                };
-               
-                xhr.send('action=auto_assign');
-            }
-        }
-       
-        // إغلاق Modal عند النقر خارجها
-        document.getElementById('classModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeClassModal();
-            }
+            });
         });
        
-        // إغلاق Modal بمفتاح ESC
+        // ============ إغلاق Modal بمفتاح ESC ============
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeClassModal();
+                closeEditModal();
+                closeDeleteModal();
             }
         });
     </script>

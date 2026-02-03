@@ -9,6 +9,155 @@ if (!has_permission('admin')) {
     exit();
 }
 
+// ============ معالجة حذف المعلم ============
+if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
+    $teacher_id = clean_input($_GET['delete_id']);
+    
+    // الحصول على user_id للمعلم أولاً
+    $sql = "SELECT user_id FROM teachers WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $teacher_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $user_id = $row['user_id'];
+        
+        // بدء المعاملة
+        $conn->begin_transaction();
+        
+        try {
+            // حذف سجلات teacher_classes أولاً
+            $sql1 = "DELETE FROM teacher_classes WHERE teacher_id = ?";
+            $stmt1 = $conn->prepare($sql1);
+            $stmt1->bind_param("i", $teacher_id);
+            $stmt1->execute();
+            
+            // حذف سجلات classes التي يرتبط بها المعلم
+            $sql2 = "UPDATE classes SET teacher_id = NULL WHERE teacher_id = ?";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bind_param("i", $teacher_id);
+            $stmt2->execute();
+            
+            // حذف المعلم من جدول teachers
+            $sql3 = "DELETE FROM teachers WHERE id = ?";
+            $stmt3 = $conn->prepare($sql3);
+            $stmt3->bind_param("i", $teacher_id);
+            $stmt3->execute();
+            
+            // حذف المستخدم من جدول users
+            $sql4 = "DELETE FROM users WHERE id = ?";
+            $stmt4 = $conn->prepare($sql4);
+            $stmt4->bind_param("i", $user_id);
+            $stmt4->execute();
+            
+            // تأكيد المعاملة
+            $conn->commit();
+            
+            $_SESSION['success_msg'] = "تم حذف المعلم بنجاح!";
+            
+        } catch (Exception $e) {
+            // التراجع عن المعاملة في حالة الخطأ
+            $conn->rollback();
+            $_SESSION['error_msg'] = "حدث خطأ أثناء حذف المعلم: " . $e->getMessage();
+        }
+    } else {
+        $_SESSION['error_msg'] = "المعلم غير موجود!";
+    }
+    
+    // البقاء في نفس الصفحة بدلاً من إعادة التوجيه
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+// ============ معالجة تحديث المعلم ============
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_teacher'])) {
+    $teacher_id = clean_input($_POST['teacher_id']);
+    $full_name = clean_input($_POST['full_name']);
+    $email = clean_input($_POST['email']);
+    $phone = clean_input($_POST['phone']);
+    $national_id = clean_input($_POST['national_id']);
+    $birth_date = clean_input($_POST['birth_date']);
+    $qualification = clean_input($_POST['qualification']);
+    $specialization = clean_input($_POST['specialization']);
+    $hire_date = clean_input($_POST['hire_date']);
+    $employment_type = clean_input($_POST['employment_type']);
+    $salary = clean_input($_POST['salary']);
+    $experience_years = clean_input($_POST['experience_years']);
+    $bank_name = clean_input($_POST['bank_name']);
+    $bank_account = clean_input($_POST['bank_account']);
+    $office_number = clean_input($_POST['office_number']);
+    $office_hours = clean_input($_POST['office_hours']);
+    $user_status = clean_input($_POST['user_status']);
+    
+    // الحصول على user_id للمعلم
+    $sql = "SELECT user_id FROM teachers WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $teacher_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $user_id = $row['user_id'];
+        
+        // بدء المعاملة
+        $conn->begin_transaction();
+        
+        try {
+            // تحديث جدول users
+            $sql1 = "UPDATE users SET 
+                    full_name = ?, 
+                    email = ?, 
+                    phone = ?, 
+                    status = ? 
+                    WHERE id = ?";
+            $stmt1 = $conn->prepare($sql1);
+            $stmt1->bind_param("ssssi", $full_name, $email, $phone, $user_status, $user_id);
+            $stmt1->execute();
+            
+            // تحديث جدول teachers
+            $sql2 = "UPDATE teachers SET 
+                    national_id = ?, 
+                    birth_date = ?, 
+                    qualification = ?, 
+                    specialization = ?, 
+                    hire_date = ?, 
+                    employment_type = ?, 
+                    salary = ?, 
+                    experience_years = ?, 
+                    bank_name = ?, 
+                    bank_account = ?, 
+                    office_number = ?, 
+                    office_hours = ? 
+                    WHERE id = ?";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bind_param("ssssssisssssi", 
+                $national_id, $birth_date, $qualification, $specialization, 
+                $hire_date, $employment_type, $salary, $experience_years, 
+                $bank_name, $bank_account, $office_number, $office_hours, $teacher_id);
+            $stmt2->execute();
+            
+            // تأكيد المعاملة
+            $conn->commit();
+            
+            $_SESSION['success_msg'] = "تم تحديث بيانات المعلم بنجاح!";
+            
+        } catch (Exception $e) {
+            // التراجع عن المعاملة في حالة الخطأ
+            $conn->rollback();
+            $_SESSION['error_msg'] = "حدث خطأ أثناء تحديث بيانات المعلم: " . $e->getMessage();
+        }
+    } else {
+        $_SESSION['error_msg'] = "المعلم غير موجود!";
+    }
+    
+    // البقاء في نفس الصفحة بدلاً من إعادة التوجيه
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
 // ============ معالجة البحث فقط ============
 $search = '';
 $where_clause = '';
@@ -39,6 +188,7 @@ $sql = "SELECT
             t.bank_account,
             t.office_number,
             t.office_hours,
+            t.user_id,
             u.full_name,
             u.email,
             u.phone,
@@ -517,6 +667,51 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
         }
 
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            color: white;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-edit {
+            background: var(--gradient-primary);
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4090 100%);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--gradient-danger);
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #e76c7c 0%, #e8a798 100%);
+            color: white;
+        }
+
         /* Badge Styles */
         .badge-container {
             display: flex;
@@ -647,6 +842,214 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             color: #856404;
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-strong);
+            animation: slideInDown 0.4s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: var(--transition);
+            padding: 5px;
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+            transform: rotate(90deg);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn-submit {
+            background: var(--gradient-success);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            padding: 12px 30px;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+            transform: translateY(-3px);
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .delete-icon {
+            font-size: 4rem;
+            color: var(--danger-color);
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .delete-text {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .delete-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-confirm-delete {
+            background: var(--gradient-danger);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-confirm-delete:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
         /* Messages */
         .alert-message {
             padding: 20px 25px;
@@ -658,6 +1061,25 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             gap: 15px;
             box-shadow: var(--shadow-soft);
             border: none;
+            position: relative;
+        }
+
+        .alert-close {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .alert-close:hover {
+            opacity: 1;
         }
 
         @keyframes slideInDown {
@@ -667,6 +1089,15 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             }
             to {
                 transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
                 opacity: 1;
             }
         }
@@ -815,6 +1246,25 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
             .badge-container {
                 justify-content: center;
             }
+           
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+           
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+           
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+           
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Loading Skeleton */
@@ -920,23 +1370,29 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
 
         <!-- Messages -->
         <?php if (!empty($success_msg)): ?>
-            <div class="alert-message alert-success">
+            <div class="alert-message alert-success" id="successMessage">
                 <i class="fas fa-check-circle fa-lg"></i>
                 <span class="ms-2"><?php echo $success_msg; ?></span>
+                <button class="alert-close" onclick="closeMessage('successMessage')">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         <?php endif; ?>
     
         <?php if (!empty($error_msg)): ?>
-            <div class="alert-message alert-error">
+            <div class="alert-message alert-error" id="errorMessage">
                 <i class="fas fa-exclamation-circle fa-lg"></i>
                 <span class="ms-2"><?php echo $error_msg; ?></span>
+                <button class="alert-close" onclick="closeMessage('errorMessage')">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         <?php endif; ?>
 
         <!-- Search Section -->
         <div class="search-section glass-card">
             <div class="search-wrapper">
-                <form method="GET" action="manage_teachers.php" id="searchForm">
+                <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="searchForm">
                     <input type="text"
                            name="search"
                            class="search-input"
@@ -974,6 +1430,7 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                 <th>التاريخ والمدة</th>
                                 <th>الصفوف المشرفة</th>
                                 <th>الحالة</th>
+                                <th>العمليات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1170,6 +1627,22 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
                                             </span>
                                         <?php endif; ?>
                                     </td>
+                                
+                                    <!-- العمليات -->
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-action btn-edit" 
+                                                    onclick="openEditModal(<?php echo htmlspecialchars(json_encode($teacher)); ?>)">
+                                                <i class="fas fa-edit"></i>
+                                                تعديل
+                                            </button>
+                                            <button class="btn-action btn-delete" 
+                                                    onclick="confirmDelete(<?php echo $teacher['id']; ?>, '<?php echo addslashes($full_name); ?>')">
+                                                <i class="fas fa-trash"></i>
+                                                حذف
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -1187,7 +1660,234 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
         </div>
     </div>
 
+    <!-- Edit Teacher Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-edit"></i>
+                    تعديل بيانات المعلم
+                </h2>
+                <button class="modal-close" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editTeacherForm" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <input type="hidden" name="teacher_id" id="teacher_id">
+                <input type="hidden" name="update_teacher" value="1">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="full_name">الاسم الكامل</label>
+                        <input type="text" class="form-input" id="full_name" name="full_name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="email">البريد الإلكتروني</label>
+                        <input type="email" class="form-input" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="phone">رقم الهاتف</label>
+                        <input type="tel" class="form-input" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="national_id">رقم الهوية الوطنية</label>
+                        <input type="text" class="form-input" id="national_id" name="national_id">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="birth_date">تاريخ الميلاد</label>
+                        <input type="date" class="form-input" id="birth_date" name="birth_date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="qualification">المؤهل العلمي</label>
+                        <input type="text" class="form-input" id="qualification" name="qualification">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="specialization">التخصص</label>
+                        <input type="text" class="form-input" id="specialization" name="specialization" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="hire_date">تاريخ التعيين</label>
+                        <input type="date" class="form-input" id="hire_date" name="hire_date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="employment_type">نوع التوظيف</label>
+                        <select class="form-select" id="employment_type" name="employment_type" required>
+                            <option value="دائم">دائم</option>
+                            <option value="متعاقد">متعاقد</option>
+                            <option value="جزء من الوقت">جزء من الوقت</option>
+                            <option value="استشاري">استشاري</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="salary">الراتب</label>
+                        <input type="number" class="form-input" id="salary" name="salary" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="experience_years">سنوات الخبرة</label>
+                        <input type="number" class="form-input" id="experience_years" name="experience_years" min="0" max="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="bank_name">اسم البنك</label>
+                        <input type="text" class="form-input" id="bank_name" name="bank_name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="bank_account">رقم الحساب البنكي</label>
+                        <input type="text" class="form-input" id="bank_account" name="bank_account">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="office_number">رقم المكتب</label>
+                        <input type="text" class="form-input" id="office_number" name="office_number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="office_hours">ساعات المكتب</label>
+                        <input type="text" class="form-input" id="office_hours" name="office_hours" placeholder="مثال: 8:00 ص - 3:00 م">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="user_status">حالة المستخدم</label>
+                        <select class="form-select" id="user_status" name="user_status" required>
+                            <option value="active">نشط</option>
+                            <option value="inactive">غير نشط</option>
+                            <option value="suspended">موقوف</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">إلغاء</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save"></i>
+                        حفظ التغييرات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal-content delete-modal">
+            <div class="delete-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="delete-text" id="deleteMessage">هل أنت متأكد من حذف هذا المعلم؟</h3>
+            <div class="delete-actions">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">إلغاء</button>
+                <button type="button" class="btn-confirm-delete" onclick="performDelete()">
+                    <i class="fas fa-trash"></i>
+                    نعم، احذف
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // ============ متغيرات عامة ============
+        let currentTeacherId = null;
+
+        // ============ فتح نافذة التعديل ============
+        function openEditModal(teacherData) {
+            document.getElementById('teacher_id').value = teacherData.id;
+            document.getElementById('full_name').value = teacherData.full_name || '';
+            document.getElementById('email').value = teacherData.email || '';
+            document.getElementById('phone').value = teacherData.phone || '';
+            document.getElementById('national_id').value = teacherData.national_id || '';
+            document.getElementById('birth_date').value = teacherData.birth_date || '';
+            document.getElementById('qualification').value = teacherData.qualification || '';
+            document.getElementById('specialization').value = teacherData.specialization || '';
+            document.getElementById('hire_date').value = teacherData.hire_date || '';
+            document.getElementById('employment_type').value = teacherData.employment_type || 'دائم';
+            document.getElementById('salary').value = teacherData.salary || '';
+            document.getElementById('experience_years').value = teacherData.experience_years || '';
+            document.getElementById('bank_name').value = teacherData.bank_name || '';
+            document.getElementById('bank_account').value = teacherData.bank_account || '';
+            document.getElementById('office_number').value = teacherData.office_number || '';
+            document.getElementById('office_hours').value = teacherData.office_hours || '';
+            document.getElementById('user_status').value = teacherData.user_status || 'active';
+            
+            document.getElementById('editModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ============ إغلاق نافذة التعديل ============
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // ============ تأكيد الحذف ============
+        function confirmDelete(teacherId, teacherName) {
+            currentTeacherId = teacherId;
+            document.getElementById('deleteMessage').innerHTML = 
+                `هل أنت متأكد من حذف المعلم <strong>${teacherName}</strong>؟<br>هذا الإجراء لا يمكن التراجع عنه.`;
+            document.getElementById('deleteModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ============ إغلاق نافذة الحذف ============
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentTeacherId = null;
+        }
+
+        // ============ تنفيذ الحذف ============
+        function performDelete() {
+            if (currentTeacherId) {
+                window.location.href = `<?php echo $_SERVER['PHP_SELF']; ?>?delete_id=${currentTeacherId}`;
+            }
+        }
+
+        // ============ إغلاق رسائل النجاح/الخطأ ============
+        function closeMessage(messageId) {
+            document.getElementById(messageId).style.display = 'none';
+        }
+
+        // ============ إغلاق رسائل النجاح/الخطأ تلقائياً بعد 5 ثوانٍ ============
+        setTimeout(function() {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (successMsg) {
+                successMsg.style.display = 'none';
+            }
+            if (errorMsg) {
+                errorMsg.style.display = 'none';
+            }
+        }, 5000);
+
+        // ============ إغلاق النوافذ بالضغط على ESC ============
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditModal();
+                closeDeleteModal();
+            }
+        });
+
+        // ============ إغلاق النوافذ بالضغط خارجها ============
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    if (this.id === 'editModal') closeEditModal();
+                    if (this.id === 'deleteModal') closeDeleteModal();
+                }
+            });
+        });
+
         // ============ البحث الفوري ============
         document.querySelector('.search-input').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
@@ -1203,21 +1903,25 @@ unset($_SESSION['success_msg'], $_SESSION['error_msg']);
         document.querySelector('.search-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const searchValue = this.value.trim();
+                const url = new URL(window.location.href);
+                
                 if (searchValue !== '') {
-                    window.location.href = 'manage_teachers.php?search=' + encodeURIComponent(searchValue);
+                    url.searchParams.set('search', searchValue);
                 } else {
-                    window.location.href = 'manage_teachers.php';
+                    url.searchParams.delete('search');
                 }
+                
+                window.location.href = url.toString();
             }
         });
 
         // ============ تأثيرات Hover الإضافية ============
-        document.querySelectorAll('.badge, .class-badge, .status-badge').forEach(badge => {
-            badge.addEventListener('mouseenter', function() {
+        document.querySelectorAll('.badge, .class-badge, .status-badge, .btn-action').forEach(element => {
+            element.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-3px)';
             });
            
-            badge.addEventListener('mouseleave', function() {
+            element.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0)';
             });
         });
